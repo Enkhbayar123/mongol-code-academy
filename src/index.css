@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles from your original site */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0a0a0a;
+  color: #f1f5f9;
+}
+
+/* Custom Utility Classes */
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* For the accordion animation */
+  .accordion-content {
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
