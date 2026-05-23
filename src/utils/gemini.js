@@ -37,23 +37,33 @@ const API_VERSIONS = [
  * Sends chat history to Gemini API under counselor instructions.
  * Incorporates a robust nested model and API version fallback chain to ensure high reliability.
  * @param {Array<{sender: 'user'|'ai', text: string}>} chatHistory 
+ * @param {string} language - Active language code ('mn' | 'ko' | 'en')
  * @returns {Promise<string>}
  */
-export async function askGeminiCounselor(chatHistory) {
+export async function askGeminiCounselor(chatHistory, language = 'mn') {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!apiKey || apiKey === "your_free_gemini_api_key_here") {
     return "Энэхүү платформд Gemini API түлхүүр тохируулагдаагүй байна. Та төслийн root хавтас дотор '.env' файл үүсгэн VITE_GEMINI_API_KEY түлхүүрээ оруулна уу. (Gemini API key is not configured in the .env file).";
   }
 
+  const langName = language === 'ko' ? 'Korean' : language === 'en' ? 'English' : 'Mongolian';
+  const lastUserIndex = chatHistory.map(m => m.sender).lastIndexOf('user');
+
   // Format message history for Gemini API with context-injected counselor instructions
   const contents = chatHistory.map((msg, index) => {
     // Find the very first message sent by the user to inject the counselor system rules
     const isFirstUserMessage = msg.sender === 'user' && !chatHistory.slice(0, index).some(m => m.sender === 'user');
+    const isLastUserMessage = index === lastUserIndex;
     
     let text = msg.text;
+
     if (isFirstUserMessage) {
-      text = `[SYSTEM INSTRUCTION: ${SYSTEM_INSTRUCTION}]\n\nStudent Message: ${msg.text}`;
+      text = `[SYSTEM INSTRUCTION: ${SYSTEM_INSTRUCTION}]\n\nStudent Message: ${text}`;
+    }
+
+    if (isLastUserMessage) {
+      text = `[LANGUAGE DIRECTIVE: You MUST respond, console, and answer this and all future messages ENTIRELY in the ${langName} language. Do not output other languages.]\n\n${text}`;
     }
 
     return {

@@ -3,16 +3,23 @@ import { useLanguage } from '../context/LanguageContext';
 import { askGeminiCounselor } from '../utils/gemini';
 
 const MongolGPT = () => {
-  const { t } = useLanguage();
-  const [messages, setMessages] = useState([
-    {
-      sender: 'ai',
-      text: 'Сайн байна уу! Би таны сурлага, мэргэжил сонголт болон сэтгэл зүйн зөвлөх MongolGPT байна. Би танд суралцах замын зураглал гаргах, мэргэжлээ зөв сонгох болон сэтгэл зүйн тусламж үзүүлэхэд бэлэн байна. Та асуух зүйлээ доор бичээрэй. 😊'
-    }
-  ]);
+  const { t, language } = useLanguage();
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const chatContainerRef = useRef(null);
+
+  // Re-translate or initialize welcome message when language changes
+  useEffect(() => {
+    if (messages.length === 0 || (messages.length === 1 && messages[0].sender === 'ai')) {
+      setMessages([
+        {
+          sender: 'ai',
+          text: t('mongolgpt_welcome')
+        }
+      ]);
+    }
+  }, [language]);
 
   // Auto-scroll chat window inside the scrollable container only
   useEffect(() => {
@@ -38,8 +45,8 @@ const MongolGPT = () => {
     setLoading(true);
 
     try {
-      // 2. Call Gemini counselor helper
-      const aiResponseText = await askGeminiCounselor(updatedHistory);
+      // 2. Call Gemini counselor helper with the active language parameter
+      const aiResponseText = await askGeminiCounselor(updatedHistory, language);
       
       // 3. Add AI message
       setMessages(prev => [...prev, { sender: 'ai', text: aiResponseText }]);
@@ -47,15 +54,15 @@ const MongolGPT = () => {
       console.error(err);
       setMessages(prev => [
         ...prev, 
-        { sender: 'ai', text: 'Уучлаарай, хариу илгээх явцад алдаа гарлаа. Та дахин оролдоно уу.' }
+        { sender: 'ai', text: t('mongolgpt_error') }
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSuggestedPrompt = (promptText) => {
-    setInputText(promptText);
+  const handleSuggestedPrompt = (promptKey) => {
+    setInputText(t(promptKey));
   };
 
   return (
@@ -124,22 +131,22 @@ const MongolGPT = () => {
         {/* Suggested Prompts */}
         <div className="px-6 py-4 border-t border-white/5 flex gap-3 overflow-x-auto whitespace-nowrap bg-slate-950/30 z-10">
           <button 
-            onClick={() => handleSuggestedPrompt('Би хэрхэн Вэб хөгжүүлэгч болох вэ? Сурлагын замын зураг гаргаж өгнө үү.')}
+            onClick={() => handleSuggestedPrompt('mongolgpt_suggested_roadmap_prompt')}
             className="text-xs bg-white/5 hover:bg-sky-500/10 border border-white/10 hover:border-sky-500/30 px-4 py-2.5 rounded-2xl text-slate-300 font-semibold transition-all duration-200 shadow-sm"
           >
-            🗺️ Вэб замын зураг
+            {t('mongolgpt_suggested_roadmap_btn')}
           </button>
           <button 
-            onClick={() => handleSuggestedPrompt('Би код бичиж эхлэхдээ ямар мэргэжил эсвэл чиглэл сонговол зүгээр вэ? Зөвлөгөө өгөөч.')}
+            onClick={() => handleSuggestedPrompt('mongolgpt_suggested_career_prompt')}
             className="text-xs bg-white/5 hover:bg-sky-500/10 border border-white/10 hover:border-sky-500/30 px-4 py-2.5 rounded-2xl text-slate-300 font-semibold transition-all duration-200 shadow-sm"
           >
-            🎯 Мэргэжил сонгох зөвлөгөө
+            {t('mongolgpt_suggested_career_btn')}
           </button>
           <button 
-            onClick={() => handleSuggestedPrompt('Сүүлийн үед хичээлүүд маш хэцүү санагдаж, стрессдэж байна. Сэтгэл зүйн зөвлөгөө өгнө үү.')}
+            onClick={() => handleSuggestedPrompt('mongolgpt_suggested_stress_prompt')}
             className="text-xs bg-white/5 hover:bg-sky-500/10 border border-white/10 hover:border-sky-500/30 px-4 py-2.5 rounded-2xl text-slate-300 font-semibold transition-all duration-200 shadow-sm"
           >
-            🌱 Стресс менежмент
+            {t('mongolgpt_suggested_stress_btn')}
           </button>
         </div>
 
@@ -150,7 +157,7 @@ const MongolGPT = () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             disabled={loading}
-            placeholder={loading ? "МонголGPT хариу бэлдэж байна..." : "Асуултаа энд бичнэ үү..."}
+            placeholder={loading ? t('mongolgpt_placeholder_loading') : t('mongolgpt_placeholder')}
             className="flex-grow bg-white/5 border border-white/5 focus:border-sky-500/40 focus:ring-1 focus:ring-sky-500/30 rounded-2xl px-5 py-4 text-sm focus:outline-none transition-all duration-300 placeholder-slate-500 text-slate-100 disabled:opacity-50"
           />
           <button
@@ -158,7 +165,7 @@ const MongolGPT = () => {
             disabled={loading}
             className="bg-gradient-to-r from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white font-bold px-8 rounded-2xl transition-all duration-300 shadow-lg shadow-sky-500/15 flex items-center justify-center gap-2 text-sm transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <span>Илгээх</span>
+            <span>{t('mongolgpt_send')}</span>
             <span>🚀</span>
           </button>
         </form>

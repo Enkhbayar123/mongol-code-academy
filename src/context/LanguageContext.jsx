@@ -15,6 +15,19 @@ const translations = {
     logout: "Гарах",
     login: "Нэвтрэх",
     register: "Бүртгүүлэх",
+
+    // MongolGPT Chat Translation
+    mongolgpt_welcome: "Сайн байна уу! Би таны сурлага, мэргэжил сонголт болон сэтгэл зүйн зөвлөх MongolGPT байна. Би танд суралцах замын зураглал гаргах, мэргэжлээ зөв сонгох болон сэтгэл зүйн тусламж үзүүлэхэд бэлэн байна. Та асуух зүйлээ доор бичээрэй. 😊",
+    mongolgpt_suggested_roadmap_btn: "🗺️ Вэб замын зураг",
+    mongolgpt_suggested_roadmap_prompt: "Би хэрхэн Вэб хөгжүүлэгч болох вэ? Сурлагын замын зураг гаргаж өгнө үү.",
+    mongolgpt_suggested_career_btn: "🎯 Мэргэжил сонгох зөвлөгөө",
+    mongolgpt_suggested_career_prompt: "Би код бичиж эхлэхдээ ямар мэргэжил эсвэл чиглэл сонговол зүгээр вэ? Зөвлөгөө өгөөч.",
+    mongolgpt_suggested_stress_btn: "🌱 Стресс менежмент",
+    mongolgpt_suggested_stress_prompt: "Сүүлийн үед хичээлүүд маш хэцүү санагдаж, стрессдэж байна. Сэтгэл зүйн зөвлөгөө өгнө үү.",
+    mongolgpt_placeholder: "Асуултаа энд бичнэ үү...",
+    mongolgpt_placeholder_loading: "MongolGPT хариу бэлдэж байна...",
+    mongolgpt_send: "Илгээх",
+    mongolgpt_error: "Уучлаарай, хариу илгээх явцад алдаа гарлаа. Та дахин оролдоно уу.",
     
     // Home Page
     hero_title_1: "Бодлого Бод",
@@ -169,6 +182,19 @@ const translations = {
     logout: "로그아웃",
     login: "로그인",
     register: "회원가입",
+
+    // MongolGPT Chat Translation
+    mongolgpt_welcome: "안녕하세요! 저는 Mongol Code Academy의 학업, 진로 및 심리 전문 상담 멘토인 몽골GPT입니다. 학습 로드맵 수립, 올바른 전공 선택, 그리고 지칠 때 힘이 되어줄 심리 상담을 도와드릴 수 있습니다. 궁금한 점을 아래에 입력해 주세요. 😊",
+    mongolgpt_suggested_roadmap_btn: "🗺️ 웹 개발 로드맵",
+    mongolgpt_suggested_roadmap_prompt: "어떻게 하면 웹 개발자가 될 수 있나요? 상세한 학습 로드맵을 작성해 주세요.",
+    mongolgpt_suggested_career_btn: "🎯 진로 선택 상담",
+    mongolgpt_suggested_career_prompt: "처음 코딩을 시작할 때 어떤 분야나 전공을 선택하는 것이 좋을까요? 조언해 주세요.",
+    mongolgpt_suggested_stress_btn: "🌱 스트레스 관리",
+    mongolgpt_suggested_stress_prompt: "최근 학업이 너무 어렵게 느껴지고 스트레스를 받습니다. 심리 상담과 격려를 부탁드립니다.",
+    mongolgpt_placeholder: "질문을 여기에 입력하세요...",
+    mongolgpt_placeholder_loading: "몽골GPT가 답변을 준비하고 있습니다...",
+    mongolgpt_send: "전송",
+    mongolgpt_error: "죄송합니다. 답변을 전송하는 과정에서 오류가 발생했습니다. 다시 시도해 주세요.",
     
     // Home Page
     hero_title_1: "문제 풀이로",
@@ -336,6 +362,19 @@ const translations = {
     logout: "Logout",
     login: "Login",
     register: "Register",
+
+    // MongolGPT Chat Translation
+    mongolgpt_welcome: "Hello! I am MongolGPT, your specialized academic, career, and psychological counselor at Mongol Code Academy. I am here to help you build learning roadmaps, select the right tech major, and manage academic stress. Feel free to ask your questions below! 😊",
+    mongolgpt_suggested_roadmap_btn: "🗺️ Web Roadmap",
+    mongolgpt_suggested_roadmap_prompt: "How can I become a Web Developer? Please generate a structured learning roadmap for me.",
+    mongolgpt_suggested_career_btn: "🎯 Career Advice",
+    mongolgpt_suggested_career_prompt: "What major or direction should I choose when starting to code? Please advise.",
+    mongolgpt_suggested_stress_btn: "🌱 Stress Management",
+    mongolgpt_suggested_stress_prompt: "Lately, the coding concepts feel very difficult and I am stressed. Please provide some psychological support.",
+    mongolgpt_placeholder: "Type your question here...",
+    mongolgpt_placeholder_loading: "MongolGPT is preparing response...",
+    mongolgpt_send: "Send",
+    mongolgpt_error: "Sorry, an error occurred while sending the message. Please try again.",
     
     // Home Page
     hero_title_1: "Solve Problems",
