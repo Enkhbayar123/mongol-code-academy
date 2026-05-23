@@ -12,32 +12,36 @@ import Curriculum from './pages/Curriculum';
 import BasicProblem from './pages/BasicProblem';
 import Problem from './pages/Problem';
 
-// --- NEW IMPORTS ---
+// --- IMPORTS ---
 import Login from './pages/Login';
 import Register from './pages/Register';
-import LiveClasses from './pages/LiveClasses';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import MongolGPT from './pages/MongolGPT';
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col font-inter">
+      <div className="min-h-screen flex flex-col bg-[#030712] relative overflow-hidden grid-bg">
+        {/* Glow Effects */}
+        <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-sky-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+        <div className="absolute top-[40%] right-[-10%] w-[45vw] h-[45vw] bg-purple-600/5 rounded-full blur-[140px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-[-10%] left-[20%] w-[40vw] h-[40vw] bg-pink-500/5 rounded-full blur-[120px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
+        
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow relative z-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/courses" element={<Courses />} />
-            <Route path="/live-classes" element={<LiveClasses />} />
             <Route path="/practice-hub" element={<PracticeHub />} />
             <Route path="/practice-basic" element={<BasicPracticeList />} />
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/practice-basic/:id" element={<BasicProblem />} />
             <Route path="/problem/:id" element={<Problem />} />
-            
-            {/* NEW ROUTE */}
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/mongol-gpt" element={<MongolGPT />} />
-
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<Admin />} />

@@ -5,12 +5,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { problemData } from '../data/problem-data';
+import { useLanguage } from '../context/LanguageContext';
 
 const Curriculum = () => {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState(null);
   const [solvedProblems, setSolvedProblems] = useState([]); // Store solved IDs
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     // 1. Listen for Auth
@@ -47,38 +49,38 @@ const Curriculum = () => {
     }
   };
 
-  if (loading) return <div className="text-center text-slate-400 mt-20">Loading curriculum...</div>;
+  if (loading) return <div className="text-center text-slate-400 mt-20">{t('courses_loading')}</div>;
 
   return (
-    <div className="container mx-auto px-6 py-16 sm:py-24">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 gradient-text">LeetCode - ийн бодлогууд</h1>
-        <p className="text-slate-400 max-w-2xl mx-auto">
-          Суурь ойлголтоос эхлээд ахисан түвшний сэдвүүдийг хамарсан чухал өгөгдлийн бүтэц, алгоритмын бүтэцтэй зам.
+    <div className="container mx-auto px-6 pt-28 pb-16 relative z-10">
+      {/* Decorative Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-sky-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight gradient-text">{t('practice_leetcode_title')}</h1>
+        <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
+          {t('curriculum_desc')}
         </p>
       </div>
 
       <div className="max-w-4xl mx-auto space-y-4">
         {problemData.map((categoryData, index) => (
-          <div key={index} className={`accordion-item bg-slate-900/70 border border-slate-800 rounded-lg overflow-hidden transition-all duration-300 ${activeCategory === categoryData.category ? 'ring-1 ring-sky-500/30' : ''}`}>
+          <div key={index} className={`glass-card rounded-3xl overflow-hidden transition-all duration-300 border ${activeCategory === categoryData.category ? 'border-sky-500/30 bg-slate-900/40 shadow-sky-500/5' : 'border-white/5'}`}>
             
             <button 
               onClick={() => toggleCategory(categoryData.category)}
-              className="w-full flex justify-between items-center p-5 text-left hover:bg-white/5 transition-colors"
+              className="w-full flex justify-between items-center p-6 sm:p-8 text-left hover:bg-white/5 transition-all"
             >
-              <span className="text-lg font-semibold text-white">{categoryData.category}</span>
-              <svg 
-                className={`w-6 h-6 text-slate-400 flex-shrink-0 transform transition-transform duration-300 ${activeCategory === categoryData.category ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
+              <span className="text-lg sm:text-xl font-bold text-slate-100">{t(categoryData.category)}</span>
+              <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 flex-shrink-0 transition-all duration-300 ${activeCategory === categoryData.category ? 'rotate-180 text-sky-400 bg-sky-500/10 border-sky-500/25' : 'hover:text-slate-200'}`}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </button>
 
-            <div className={`accordion-content bg-black/20 transition-all duration-500 ease-in-out ${activeCategory === categoryData.category ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <ul className="p-2 sm:p-4 space-y-2">
+            <div className={`accordion-content bg-[#03060c]/40 transition-all duration-500 ease-in-out overflow-hidden ${activeCategory === categoryData.category ? 'max-h-[2000px] opacity-100 border-t border-white/5' : 'max-h-0 opacity-0'}`}>
+              <ul className="p-5 sm:p-7 space-y-3">
                 {categoryData.problems.map((p) => {
                   const isSolved = solvedProblems.includes(p.id);
                   
@@ -87,26 +89,26 @@ const Curriculum = () => {
                       <Link 
                         to={`/problem/${p.id}`} 
                         className={`
-                          block w-full text-left py-3 px-4 rounded-md transition-all duration-200 border flex justify-between items-center group
+                          block w-full text-left py-3 px-5 rounded-xl transition-all duration-300 border flex justify-between items-center group
                           ${isSolved 
-                              ? "bg-green-900/20 border-green-500/50 hover:bg-green-900/30 shadow-[0_0_10px_-3px_rgba(34,197,94,0.2)]" // Solved Style
-                              : "border-slate-800/50 hover:bg-slate-800/50 hover:border-sky-500/30" // Default Style
+                              ? "bg-emerald-500/10 border-emerald-500/35 hover:bg-emerald-500/15 shadow-[0_0_15px_rgba(16,185,129,0.1)]" // Solved Style
+                              : "bg-white/5 border-white/5 hover:border-sky-500/30 hover:bg-sky-500/10 hover:shadow-md hover:shadow-sky-500/5" // Default Style
                           }
                         `}
                       >
-                        <span className={`font-medium ${isSolved ? "text-green-100" : "text-slate-300 group-hover:text-white"}`}>
-                            {p.name}
+                        <span className={`text-sm font-bold tracking-wide ${isSolved ? "text-emerald-300" : "text-slate-300 group-hover:text-white"}`}>
+                            {t(p.id + '_name')}
                         </span>
                         
                         {isSolved ? (
-                            <div className="flex items-center gap-2 bg-green-500/20 px-2 py-0.5 rounded text-xs border border-green-500/40">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <div className="flex items-center gap-2 bg-emerald-500/20 px-3.5 py-1 rounded-xl text-xs border border-emerald-500/40">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
-                                <span className="text-green-400 font-bold uppercase">Бодсон</span>
+                                <span className="text-emerald-400 font-black uppercase tracking-wider">{t('solved')}</span>
                             </div>
                         ) : (
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-600 group-hover:text-sky-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500 group-hover:text-sky-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
                         )}

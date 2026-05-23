@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useLanguage } from '../context/LanguageContext';
 
 const Home = () => {
   const [user, setUser] = useState(null);
   const [showEmail, setShowEmail] = useState(false);
   const canvasRef = useRef(null);
+  const { t } = useLanguage();
   
   // 1. Auth Listener
   useEffect(() => {
@@ -161,16 +163,16 @@ function twoSum(nums, target) {
       <section className="min-h-screen flex items-center justify-center text-center px-6 pt-24 relative overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-5xl md:text-7xl font-extrabold mb-4 leading-tight">
-            Бодлого Бод <span className="gradient-text">Кодонд мэргэш</span>
+            {t('hero_title_1')} <span className="gradient-text">{t('hero_title_2')}</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto mb-8">
-            Суурь программчлалын үндсээс эхлээд LeetCode-ийн ахисан түвшний сорил хүртэл бид таны хүссэн технологийн ажлыг олоход шаардлагатай системтэй замыг санал болгодог.
+            {t('hero_desc')}
           </p>
           
           {!user && (
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/login" className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/20 flex items-center justify-center gap-3">
-                 Нэвтрэх / Бүртгүүлэх
+                 {t('hero_login_register')}
               </Link>
             </div>
           )}
@@ -178,89 +180,109 @@ function twoSum(nums, target) {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 sm:py-32 container mx-auto px-6">
-        <div className="text-center mb-12 scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
-          <h2 className="text-4xl font-bold mb-3">Амжилтад хүрэхэд хэрэгтэй бүхэн</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            Манай платформ нь дэлхийн томоохон технологийн компаниудын ярилцлагад бэлдэх Leetcode дээрх бодлогуудыг Монгол тайлбартайгаар хүргэхэд чиглэсэн юм.
+      <section id="features" className="py-24 sm:py-32 container mx-auto px-6 relative z-10">
+        <div className="text-center mb-16 scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
+          <h2 className="text-4xl sm:text-5xl font-black mb-4 tracking-tight">{t('features_title')}</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
+            {t('features_desc')}
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:-translate-y-2 transition-transform duration-300 scroll-reveal opacity-0 translate-y-8">
-                <div className="p-3 bg-sky-500/10 rounded-lg inline-block mb-4 border border-sky-500/20">
+            <div className="glass-card glass-card-hover p-8 rounded-2xl scroll-reveal opacity-0 translate-y-8">
+                <div className="p-3 bg-sky-500/10 rounded-xl inline-block mb-5 border border-sky-500/20">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Эмх цэгцтэй суралцах хөтөлбөр</h3>
-                <p className="text-slate-400">Манай иж бүрэн сургалтын хөтөлбөрөөр А-гаас Я хүртэлх тодорхой замыг дагаж, бүх чухал алгоритмын ерөнхий ойлголтыг авах юм.</p>
+                <h3 className="text-xl font-bold mb-3 text-slate-100">{t('feat_curriculum_title')}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{t('feat_curriculum_desc')}</p>
             </div>
-            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:-translate-y-2 transition-transform duration-300 scroll-reveal opacity-0 translate-y-8 delay-100">
-                 <div className="p-3 bg-purple-500/10 rounded-lg inline-block mb-4 border border-purple-500/20">
+            <div className="glass-card glass-card-hover p-8 rounded-2xl scroll-reveal opacity-0 translate-y-8 delay-100">
+                 <div className="p-3 bg-purple-500/10 rounded-xl inline-block mb-5 border border-purple-500/20">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Бодлогуудын видео тайлбар</h3>
-                <p className="text-slate-400">Хэзээ ч гацахгүй. Бүх асуудалд зориулсан нарийвчилсан, алхам алхамаар тайлбарласан видео хичээлээр кодын “яагаад”-г ойлгоорой.</p>
+                <h3 className="text-xl font-bold mb-3 text-slate-100">{t('feat_video_title')}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{t('feat_video_desc')}</p>
             </div>
-            <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:-translate-y-2 transition-transform duration-300 scroll-reveal opacity-0 translate-y-8 delay-200">
-                <div className="p-3 bg-emerald-500/10 rounded-lg inline-block mb-4 border border-emerald-500/20">
+            <div className="glass-card glass-card-hover p-8 rounded-2xl scroll-reveal opacity-0 translate-y-8 delay-200">
+                <div className="p-3 bg-emerald-500/10 rounded-xl inline-block mb-5 border border-emerald-500/20">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Дэмжлэгтэй хамт олон</h3>
-                <p className="text-slate-400">Идэвхтэй суралцагчдын сүлжээнд нэгдээрэй. Асуулт асууж, шийдлээ хуваалцаж, хувийн нийгэмлэгтээ хамтдаа өсөж хөгжөөрэй.</p>
+                <h3 className="text-xl font-bold mb-3 text-slate-100">{t('feat_community_title')}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{t('feat_community_desc')}</p>
             </div>
         </div>
       </section>
 
       {/* Why Follow Section */}
-      <section id="why-follow" className="py-20 sm:py-32 bg-slate-900/50">
-            <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+      <section id="why-follow" className="py-24 sm:py-32 bg-[#060a13]/40 border-y border-white/5 relative z-10 backdrop-blur-sm">
+            <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
                 <div className="scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
-                    <h2 className="text-4xl font-bold mb-4">Надтай холбогдож, өөрийн өсөлтөө эрчимжүүлээрэй</h2>
-                    <p className="text-slate-400 mb-6 text-lg">
-                        Намайг GitHub болон LinkedIn дээр дагаж мөрдөх нь зөвхөн нэвтрэх шаардлага биш—энэ нь тасралтгүй мэдлэг, карьерийн боломжууд, шууд дэмжлэг авах таны гарц юм.
+                    <h2 className="text-4xl font-extrabold mb-5 tracking-tight">{t('why_connect_title')}</h2>
+                    <p className="text-slate-400 mb-8 text-lg leading-relaxed">
+                        {t('why_connect_desc')}
                     </p>
-                    <ul className="space-y-4">
+                    <ul className="space-y-5">
                         <li className="flex items-start">
-                            <span className="text-sky-400 mr-3 mt-1">✓</span>
-                            <span className="text-slate-300"><strong className="font-semibold text-white">Онцгой сангууд руу хандах:</strong> Эхлэх код, ахисан шийдлүүд, төслийн загварууд.</span>
+                            <span className="text-sky-400 mr-4 mt-1 bg-sky-500/10 p-1 rounded-lg border border-sky-500/20 font-bold">✓</span>
+                            <span className="text-slate-300 text-base leading-relaxed"><strong className="font-bold text-slate-100">{t('why_connect_item1_title')}</strong>{t('why_connect_item1_desc')}</span>
                         </li>
                          <li className="flex items-start">
-                            <span className="text-sky-400 mr-3 mt-1">✓</span>
-                             <span className="text-slate-300"><strong className="font-semibold text-white">Төслүүдийн шинэчлэлт:</strong> Миний шинэ нээлттэй эхийн төслүүд, кодын туршилтууд.</span>
+                            <span className="text-sky-400 mr-4 mt-1 bg-sky-500/10 p-1 rounded-lg border border-sky-500/20 font-bold">✓</span>
+                             <span className="text-slate-300 text-base leading-relaxed"><strong className="font-bold text-slate-100">{t('why_connect_item2_title')}</strong>{t('why_connect_item2_desc')}</span>
                         </li>
                         <li className="flex items-start">
-                             <span className="text-sky-400 mr-3 mt-1">✓</span>
-                             <span className="text-slate-300"><strong className="font-semibold text-white">Мэргэжлийн сүлжээ:</strong> Миний сүлжээнд холбогдож, карьерын зөвлөмж авах.</span>
+                             <span className="text-sky-400 mr-4 mt-1 bg-sky-500/10 p-1 rounded-lg border border-sky-500/20 font-bold">✓</span>
+                             <span className="text-slate-300 text-base leading-relaxed"><strong className="font-bold text-slate-100">{t('why_connect_item3_title')}</strong>{t('why_connect_item3_desc')}</span>
                         </li>
                     </ul>
                 </div>
                 
                 {/* Typing Animation Container */}
                 <div id="code-container" className="relative scroll-reveal opacity-0 translate-y-8 transition-all duration-700 delay-200">
-                    <div className="absolute inset-0 bg-gradient-to-r from-sky-500 to-purple-500 rounded-2xl transform -rotate-2"></div>
-                    <div className="relative bg-[#101010] p-8 rounded-2xl border border-slate-700">
-                        <pre><code id="code-snippet" className="text-sm font-mono text-green-400"></code></pre>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/20 to-purple-500/20 rounded-3xl blur-2xl"></div>
+                    <div className="relative bg-[#080b11]/95 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                        {/* macOS style title bar */}
+                        <div className="flex items-center justify-between px-5 py-3.5 bg-[#0d1321]/80 border-b border-white/5">
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-[#ff5f56] inline-block"></span>
+                                <span className="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block"></span>
+                                <span className="w-3 h-3 rounded-full bg-[#27c93f] inline-block"></span>
+                            </div>
+                            <span className="text-xs font-bold text-slate-400 font-mono tracking-wide">twoSum.js</span>
+                            <div className="w-12"></div>
+                        </div>
+                        
+                        <div className="p-6 overflow-x-auto min-h-[300px]">
+                            <pre className="font-mono text-sm leading-relaxed flex gap-4 text-[#e2e8f0]">
+                                <div className="text-slate-600 select-none text-right flex flex-col font-mono text-xs pr-3 border-r border-white/5 space-y-1">
+                                    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+                                </div>
+                                <code id="code-snippet" className="text-emerald-400 font-mono block whitespace-pre"></code>
+                            </pre>
+                        </div>
                     </div>
                 </div>
             </div>
       </section>
 
       {/* Sponsors Section */}
-      <section id="sponsors" className="py-20 sm:py-32">
+      <section id="sponsors" className="py-24 sm:py-32 relative z-10">
           <div className="container mx-auto px-6 text-center scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
-              <h2 className="text-4xl font-bold mb-4">Бидний Аяллыг Дэмжээрэй</h2>
-              <p className="text-slate-400 max-w-3xl mx-auto mb-12">
-                Mongol Code Academy нь Монголын ирээдүйн технологийн манлайлагчдыг бэлтгэх эрхэм зорилготой. Бидний үйл ажиллагааг дэмжиж, энэхүү өсөлт хөгжилтийн нэгэн хэсэг болох түншүүдийг хайж байна.
+              <h2 className="text-4xl sm:text-5xl font-black mb-4 tracking-tight">{t('sponsors_title')}</h2>
+              <p className="text-slate-400 max-w-3xl mx-auto mb-16 text-base sm:text-lg">
+                {t('sponsors_desc')}
               </p>
-              <div className="max-w-4xl mx-auto bg-slate-900/50 border-2 border-dashed border-slate-700 rounded-2xl p-12 mb-10">
-                  <p className="text-2xl font-semibold text-slate-500">Таны лого энд байрших болно</p>
+              <div className="max-w-4xl mx-auto glass-card rounded-3xl p-16 mb-12 shadow-2xl border border-white/5 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-sky-500/5 blur-[100px] pointer-events-none"></div>
+                  <p className="text-2xl font-black text-slate-400 tracking-widest uppercase mb-4">{t('sponsors_placeholder')}</p>
+                  <div className="h-[3px] w-24 bg-gradient-to-r from-emerald-500 to-sky-500 mx-auto rounded-full"></div>
               </div>
               
               {!showEmail ? (
-                <button onClick={() => setShowEmail(true)} className="bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg shadow-emerald-500/30 inline-block">
-                    Дэмжигч болох
+                <button onClick={() => setShowEmail(true)} className="bg-gradient-to-r from-emerald-400 to-sky-400 hover:from-emerald-500 hover:to-sky-500 text-white font-bold py-3.5 px-10 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-500/20 inline-block">
+                    {t('sponsors_btn')}
                 </button>
               ) : (
-                <p className="mt-4 text-xl text-sky-400 font-semibold tracking-wider animate-bounce">
+                <p className="mt-6 text-2xl text-sky-400 font-black tracking-widest animate-bounce">
                     Enkhbayare111@gmail.com
                 </p>
               )}
@@ -269,14 +291,14 @@ function twoSum(nums, target) {
 
       {/* CTA Section */}
       {!user && (
-        <section className="py-20 sm:py-32 scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
+        <section className="py-24 sm:py-32 relative z-10 scroll-reveal opacity-0 translate-y-8 transition-all duration-700">
             <div className="container mx-auto px-6 text-center">
-                <h2 className="text-4xl font-bold mb-4">Аяллаа эхлэхэд бэлэн үү?</h2>
-                <p className="text-slate-400 max-w-2xl mx-auto mb-8">
-                    Өнөөдрөөс өөрийн өсөлтдөө хөрөнгө оруулаарай.
+                <h2 className="text-4xl sm:text-5xl font-black mb-4 tracking-tight">{t('cta_ready')}</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto mb-10 text-base sm:text-lg">
+                    {t('cta_desc')}
                 </p>
-                <Link to="/register" className="bg-gradient-to-r from-sky-500 to-indigo-500 text-white font-bold py-4 px-10 rounded-lg text-lg transition-transform transform hover:scale-105 shadow-lg shadow-sky-500/30 inline-block">
-                    Үнэгүй нэгдэх
+                <Link to="/register" className="bg-gradient-to-r from-sky-400 to-indigo-500 hover:from-sky-500 hover:to-indigo-600 text-white font-bold py-4.5 px-12 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-sky-500/25 inline-block">
+                    {t('cta_btn')}
                 </Link>
             </div>
         </section>

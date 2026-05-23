@@ -1,0 +1,46 @@
+// src/data/translations-problems-mn.js
+
+export const mnProblemTranslations = {
+  // Basic Practice Problems Names
+  "bp-1_name": "Гурвалжин",
+  "bp-2_name": "Куб",
+  "bp-3_name": "Функц 1",
+  "bp-4_name": "Сүүлийн цифр",
+  "bp-5_name": "Аравтын орны цифр",
+  "bp-6_name": "3 оронтой тоо",
+  "bp-7_name": "Хоёр тооны их",
+  "bp-8_name": "3 тооны их",
+  "bp-9_name": "Тэгш тоонуудын нийлбэр",
+  "bp-10_name": "3-т хуваагдах",
+  "bp-11_name": "11-д хуваагдахгүй",
+  "bp-12_name": "IOI 3 удаа",
+  "bp-13_name": "Эхний n тооны нийлбэр",
+  "bp-14_name": "n!",
+  "bp-15_name": "Хоёрын n зэрэг",
+  "bp-16_name": "1-р хуудас(Бүхэлдээ)",
+
+  // LeetCode Problem Names
+  "find-closest-number-to-zero_name": "0-д хамгийн ойр тоог олох",
+  "merge-strings-alternatively_name": "Тэмдэгт мөрүүдийг ээлжлэн нэгтгэх",
+  "contains-duplicate_name": "Давхардлыг агуулсан эсэх",
+  "valid-anagram_name": "Хүчинтэй Анаграм",
+  "two-sum_name": "Хоёр тооны нийлбэр",
+  "roman-to-integer_name": "Ром тоог бүхэл тоо руу хөрвүүлэх",
+  "is-subsequence_name": "Дэд дараалал мөн эсэх",
+  "group-anagrams_name": "Анаграмуудыг бүлэглэх",
+  "product-of-array-except-self_name": "Өөрөөс бусдын үржвэр",
+  "longest-consecutive-sequence_name": "Хамгийн урт дараалсан дараалал",
+  "spiral-matrix_name": "Спираль Матриц",
+  "valid-palindrome_name": "Хүчинтэй Палиндром",
+  "two-sum-ii-input-array-is-sorted_name": "Хоёр тооны нийлбэр II",
+  "3sum_name": "Гурван тооны нийлбэр",
+  "container-with-most-water_name": "Хамгийн их ус агуулах сав",
+  "trapping-rain-water_name": "Борооны ус тогтоох",
+  "valid-parentheses_name": "Хүчинтэй хаалт",
+  "evaluate-reverse-polish-notation_name": "RPN илэрхийллийг бодох",
+  "generate-parentheses_name": "Хаалт үүсгэх",
+  "daily-temperatures_name": "Өдөр тутмын температур",
+  "binary-search_name": "Бинар хайлт",
+  "search-a-2d-matrix_name": "2D Матрицаас хайх",
+  "koko-eating-bananas_name": "Коко гадил идэж байна"
+};
