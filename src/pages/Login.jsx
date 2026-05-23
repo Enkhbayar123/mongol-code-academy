@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useLanguage } from '../context/LanguageContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleChange = (e) => {
     setFormData({
@@ -29,11 +31,11 @@ const Login = () => {
       navigate('/');
     } catch (err) {
       console.error(err);
-      let message = "Таны нэвтрэх хаяг эсвэл нууц үг буруу байна.";
+      let message = t('err_login_general');
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-        message = "Имэйл эсвэл нууц үг буруу байна.";
+        message = t('err_login_creds');
       } else if (err.code === 'auth/too-many-requests') {
-        message = "Хэт олон удаа оролдлоо. Түр хүлээгээд дахин оролдоно уу.";
+        message = t('err_login_too_many');
       }
       setError(message);
     } finally {
@@ -49,12 +51,12 @@ const Login = () => {
         <div className="glass-card rounded-3xl shadow-2xl p-10 border border-white/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/5 to-purple-500/5 pointer-events-none"></div>
           
-          <h2 className="text-3xl font-black text-center mb-2.5 tracking-tight gradient-text">Буцаад тавтай морил</h2>
-          <p className="text-slate-400 text-center mb-8 text-sm sm:text-base font-medium">Нэвтрээд программчлалын аяллаа үргэлжлүүлээрэй</p>
+          <h2 className="text-3xl font-black text-center mb-2.5 tracking-tight gradient-text">{t('login_welcome')}</h2>
+          <p className="text-slate-400 text-center mb-8 text-sm sm:text-base font-medium">{t('login_sub')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-2">Мейл хаяг</label>
+              <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-2">{t('login_email')}</label>
               <input 
                 id="email"
                 type="email" 
@@ -67,7 +69,7 @@ const Login = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-2">Нууц үг</label>
+              <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-2">{t('login_password')}</label>
               <input 
                 id="password"
                 type="password" 
@@ -95,17 +97,17 @@ const Login = () => {
                 {loading ? (
                   <>
                     <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
-                    <span>Уншиж байна...</span>
+                    <span>{t('loading_text')}</span>
                   </>
                 ) : (
-                  <span>Нэвтрэх</span>
+                  <span>{t('login_btn')}</span>
                 )}
               </button>
             </div>
           </form>
 
           <p className="text-center text-slate-400 mt-8 text-sm font-semibold">
-            Бүртгэл байхгүй юу? - <Link to="/register" className="font-bold text-sky-400 hover:text-sky-300 transition-colors underline">Бүртгэл үүсгэх</Link>
+            {t('login_no_acc')} - <Link to="/register" className="font-bold text-sky-400 hover:text-sky-300 transition-colors underline">{t('login_create_acc')}</Link>
           </p>
         </div>
       </div>

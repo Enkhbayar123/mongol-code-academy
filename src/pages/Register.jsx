@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase';
+import { useLanguage } from '../context/LanguageContext';
 
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useLanguage();
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -33,7 +35,7 @@ const Register = () => {
     setError('');
 
     if (!isSubscribed) {
-      setError("Та манай YouTube сувагт Subscribe дарсан байх шаардлагатай.");
+      setError(t('err_reg_yt'));
       return;
     }
 
@@ -57,13 +59,13 @@ const Register = () => {
       
     } catch (err) {
       console.error(err);
-      let message = "Бүртгэл үүсгэхэд алдаа гарлаа. Дахин оролдоно уу.";
+      let message = t('err_reg_general');
       if (err.code === 'auth/email-already-in-use') {
-        message = "Энэ имэйл хаяг бүртгэлтэй байна.";
+        message = t('err_reg_email_in_use');
       } else if (err.code === 'auth/weak-password') {
-        message = "Нууц үг хэтэрхий сул байна. (6-аас дээш оронтой байх ёстой)";
+        message = t('err_reg_weak_pwd');
       } else if (err.code === 'auth/invalid-email') {
-        message = "Имэйл хаяг буруу байна.";
+        message = t('err_reg_invalid_email');
       }
       setError(message);
     } finally {
@@ -79,16 +81,16 @@ const Register = () => {
         <div className="glass-card rounded-3xl shadow-2xl p-10 border border-white/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/5 to-purple-500/5 pointer-events-none"></div>
           
-          <h2 className="text-3xl font-black text-center mb-2.5 tracking-tight gradient-text">Бүртгэл Үүсгэх</h2>
-          <p className="text-slate-400 text-center mb-8 text-sm sm:text-base font-semibold">Бидэнтэй нэгдэж, өөрийн программчлалын аяллыг эхлүүлээрэй</p>
+          <h2 className="text-3xl font-black text-center mb-2.5 tracking-tight gradient-text">{t('reg_title')}</h2>
+          <p className="text-slate-400 text-center mb-8 text-sm sm:text-base font-semibold">{t('reg_sub')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             
             {/* Subscription Check */}
             <div className="bg-red-500/5 border border-red-500/20 p-5 rounded-2xl text-center">
-                <p className="text-slate-300 text-sm font-semibold mb-3.5">Биднийг дэмжиж, манай YouTube сувгийг дагаарай.</p>
+                <p className="text-slate-300 text-sm font-semibold mb-3.5">{t('reg_yt_text')}</p>
                 <a href="https://www.youtube.com/@MongolCodeAcademy" target="_blank" rel="noopener noreferrer" className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl transition duration-350 shadow-md shadow-red-600/20 hover:scale-[1.03] mb-4 text-xs tracking-wider uppercase">
-                    🎬 Subscribe дарах
+                    {t('reg_yt_btn')}
                 </a>
                 <label htmlFor="subscribe" className="flex items-center justify-center text-slate-400 cursor-pointer select-none text-xs font-bold gap-2">
                     <input 
@@ -99,13 +101,13 @@ const Register = () => {
                       checked={isSubscribed}
                       onChange={(e) => setIsSubscribed(e.target.checked)}
                     />
-                    <span>Би Subscribe дарсан (Заавал дарах ёстой)</span>
+                    <span>{t('reg_yt_checkbox')}</span>
                 </label>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                    <label htmlFor="fullName" className="block text-sm font-semibold text-slate-300 mb-2">Бүтэн нэр</label>
+                    <label htmlFor="fullName" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_fullname')}</label>
                     <input 
                         id="fullName" 
                         type="text" 
@@ -118,7 +120,7 @@ const Register = () => {
                     />
                 </div>
                 <div>
-                   <label htmlFor="age" className="block text-sm font-semibold text-slate-300 mb-2">Нас</label>
+                   <label htmlFor="age" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_age')}</label>
                    <input 
                         id="age" 
                         type="number" 
@@ -131,7 +133,7 @@ const Register = () => {
                 </div>
             </div>
              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-2">Мейл хаяг</label>
+                <label htmlFor="email" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_email')}</label>
                 <input 
                     id="email" 
                     type="email" 
@@ -145,7 +147,7 @@ const Register = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                    <label htmlFor="country" className="block text-sm font-semibold text-slate-300 mb-2">Оршин буй газар</label>
+                    <label htmlFor="country" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_country')}</label>
                     <input 
                         id="country" 
                         type="text" 
@@ -158,7 +160,7 @@ const Register = () => {
                     />
                 </div>
                 <div>
-                   <label htmlFor="experience" className="block text-sm font-semibold text-slate-300 mb-2">Программчлалын туршлага</label>
+                   <label htmlFor="experience" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_experience')}</label>
                    <select 
                         id="experience" 
                         name="experience" 
@@ -167,14 +169,14 @@ const Register = () => {
                         onChange={handleChange} 
                         value={formData.experience}
                     >
-                        <option value="Beginner">Анхан түвшин</option>
-                        <option value="Intermediate">Дунд түвшин</option>
-                        <option value="Advanced">Ахисан түвшин</option>
+                        <option value="Beginner">{t('exp_beginner')}</option>
+                        <option value="Intermediate">{t('exp_intermediate')}</option>
+                        <option value="Advanced">{t('exp_advanced')}</option>
                    </select>
                 </div>
             </div>
             <div>
-                <label htmlFor="reason" className="block text-sm font-semibold text-slate-300 mb-2">Манай платформыг ашиглаж буй шалтгаан (заавал биш)</label>
+                <label htmlFor="reason" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_reason')}</label>
                 <textarea 
                     id="reason" 
                     name="reason" 
@@ -185,7 +187,7 @@ const Register = () => {
                 ></textarea>
             </div>
             <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-2">Нууц үг (багадаа 6 оронтой)</label>
+                <label htmlFor="password" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_password')}</label>
                 <input 
                     id="password" 
                     type="password" 
@@ -214,17 +216,17 @@ const Register = () => {
                     {loading ? (
                       <>
                         <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></span>
-                        <span>Уншиж байна...</span>
+                        <span>{t('loading_text')}</span>
                       </>
                     ) : (
-                      <span>Бүртгэл үүсгэх</span>
+                      <span>{t('reg_btn')}</span>
                     )}
                 </button>
             </div>
           </form>
 
           <p className="text-center text-slate-400 mt-8 text-sm font-semibold">
-            Бүртгэл аль хэдийн үүсгэсэн үү? <Link to="/login" className="font-bold text-sky-400 hover:text-sky-300 transition-colors underline">Нэвтрэх</Link>
+            {t('reg_already_acc')} <Link to="/login" className="font-bold text-sky-400 hover:text-sky-300 transition-colors underline">{t('reg_login_link')}</Link>
           </p>
         </div>
       </div>
