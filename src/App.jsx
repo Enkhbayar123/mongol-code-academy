@@ -15,7 +15,6 @@ import Problem from './pages/Problem';
 // --- IMPORTS ---
 import Login from './pages/Login';
 import Register from './pages/Register';
-import About from './pages/About';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import MongolGPT from './pages/MongolGPT';
@@ -39,7 +38,6 @@ function App() {
             <Route path="/curriculum" element={<Curriculum />} />
             <Route path="/practice-basic/:id" element={<BasicProblem />} />
             <Route path="/problem/:id" element={<Problem />} />
-            <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/mongol-gpt" element={<MongolGPT />} />
             <Route path="/login" element={<Login />} />

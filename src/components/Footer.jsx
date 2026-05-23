@@ -53,11 +53,6 @@ const Footer = () => {
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/about" className="text-slate-400 hover:text-sky-400 text-sm transition-all duration-200 flex items-center gap-1 hover:translate-x-1">
-                  <span>→</span> {t('footer_about')}
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-slate-400 hover:text-sky-400 text-sm transition-all duration-200 flex items-center gap-1 hover:translate-x-1">
                   <span>→</span> {t('footer_contact')}
                 </Link>

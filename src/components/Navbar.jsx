@@ -51,7 +51,6 @@ const Navbar = () => {
           <Link to="/" className={linkClass('/')}>{t('home')}</Link>
           <Link to="/courses" className={linkClass('/courses')}>{t('courses')}</Link>
           <Link to="/practice-hub" className={linkClass('/practice-hub')}>{t('practice')}</Link>
-          <Link to="/about" className={linkClass('/about')}>{t('about')}</Link>
           <Link to="/contact" className={linkClass('/contact')}>{t('contact')}</Link>
           
           {/* MongolGPT Link */}
@@ -121,7 +120,6 @@ const Navbar = () => {
             <Link to="/" className={`block py-2.5 px-3 rounded-xl text-sm font-semibold ${isActive('/') ? 'text-sky-400 bg-sky-500/10' : 'text-slate-300'}`} onClick={() => setIsMobileMenuOpen(false)}>{t('home')}</Link>
             <Link to="/courses" className={`block py-2.5 px-3 rounded-xl text-sm font-semibold ${isActive('/courses') ? 'text-sky-400 bg-sky-500/10' : 'text-slate-300'}`} onClick={() => setIsMobileMenuOpen(false)}>{t('courses')}</Link>
             <Link to="/practice-hub" className={`block py-2.5 px-3 rounded-xl text-sm font-semibold ${isActive('/practice-hub') ? 'text-sky-400 bg-sky-500/10' : 'text-slate-300'}`} onClick={() => setIsMobileMenuOpen(false)}>{t('practice')}</Link>
-            <Link to="/about" className={`block py-2.5 px-3 rounded-xl text-sm font-semibold ${isActive('/about') ? 'text-sky-400 bg-sky-500/10' : 'text-slate-300'}`} onClick={() => setIsMobileMenuOpen(false)}>{t('about')}</Link>
             <Link to="/contact" className={`block py-2.5 px-3 rounded-xl text-sm font-semibold ${isActive('/contact') ? 'text-sky-400 bg-sky-500/10' : 'text-slate-300'}`} onClick={() => setIsMobileMenuOpen(false)}>{t('contact')}</Link>
             <Link to="/mongol-gpt" className={`block py-2.5 px-3 rounded-xl text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 hover:bg-purple-500/5`} onClick={() => setIsMobileMenuOpen(false)}>{t('mongolgpt')}</Link>
             
