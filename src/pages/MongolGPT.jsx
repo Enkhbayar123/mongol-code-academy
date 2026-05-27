@@ -1,13 +1,53 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 import { useLanguage } from '../context/LanguageContext';
 import { askGeminiCounselor } from '../utils/gemini';
 
 const MongolGPT = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const chatContainerRef = useRef(null);
+
+  // 1. Auth Gate Protection
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        navigate('/login');
+      } else {
+        setUser(currentUser);
+        setLoadingAuth(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [navigate]);
+
+  // Load personality type query param if redirected from test
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pType = params.get('type');
+    const miTypes = params.get('miTypes');
+    const varkTypes = params.get('varkTypes');
+
+    if (pType) {
+      const suggestedText = `I just took the Mongol Code Academy 16 Personality Test and received ${pType}! Can you explain my strengths, weaknesses, and recommend a personalized study roadmap for learning to code at the academy?`;
+      setInputText(suggestedText);
+    } else if (miTypes) {
+      const formattedTypes = miTypes.split(',').join(' and ');
+      const suggestedText = `I just took the Mongol Code Academy Multiple Intelligences Diagnostic Test, and my dominant intelligences are ${formattedTypes}! Can you explain how these cognitive pathways impact my programming learning style, and recommend a tailored study roadmap with suitable technologies and languages?`;
+      setInputText(suggestedText);
+    } else if (varkTypes) {
+      const formattedTypes = varkTypes.split(',').join(' and ');
+      const suggestedText = `I just took the Mongol Code Academy VARK Sensory Learning Style Test, and my dominant sensory modalities are ${formattedTypes}! Can you explain how this learning profile affects my software learning style, and recommend a personalized study roadmap, IDE layouts, and resources tailored to these channels?`;
+      setInputText(suggestedText);
+    }
+  }, []);
 
   // Re-translate or initialize welcome message when language changes
   useEffect(() => {
@@ -64,6 +104,17 @@ const MongolGPT = () => {
   const handleSuggestedPrompt = (promptKey) => {
     setInputText(t(promptKey));
   };
+
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-sm font-semibold tracking-wide">Securing connection...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-80px)] text-white flex flex-col items-center pt-28 pb-16 px-4 sm:px-8 relative z-10">
