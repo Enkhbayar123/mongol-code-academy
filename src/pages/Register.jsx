@@ -17,6 +17,7 @@ const Register = () => {
     email: '',
     country: '',
     experience: 'Beginner',
+    isTegshUhaan: 'No', // New field added here
     reason: '',
     password: ''
   });
@@ -51,6 +52,7 @@ const Register = () => {
         age: formData.age ? parseInt(formData.age) : null,
         country: formData.country,
         programmingExperience: formData.experience,
+        isTegshUhaan: formData.isTegshUhaan === 'Yes', // Stored in Firestore as boolean
         reasonForJoining: formData.reason,
         createdAt: new Date()
       });
@@ -175,6 +177,25 @@ const Register = () => {
                    </select>
                 </div>
             </div>
+
+            {/* Tegsh Uhaan School Question Selection */}
+            <div>
+                <label htmlFor="isTegshUhaan" className="block text-sm font-semibold text-slate-300 mb-2">
+                  Тэгш ухаан сургуулийн сурагч эсэх? (Are you from Tegsh Uhaan School?)
+                </label>
+                <select 
+                    id="isTegshUhaan" 
+                    name="isTegshUhaan" 
+                    required 
+                    className="w-full px-4 py-3 rounded-2xl bg-[#080d16] border border-white/10 text-slate-100 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/30 transition-all duration-300 cursor-pointer"
+                    onChange={handleChange} 
+                    value={formData.isTegshUhaan}
+                >
+                    <option value="No">Үгүй (No)</option>
+                    <option value="Yes">Тийм (Yes)</option>
+                </select>
+            </div>
+
             <div>
                 <label htmlFor="reason" className="block text-sm font-semibold text-slate-300 mb-2">{t('reg_reason')}</label>
                 <textarea 

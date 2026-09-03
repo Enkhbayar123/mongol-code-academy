@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useLanguage } from '../context/LanguageContext';
+import partnerLogo from '../assets/partner-logo.png';
 
 const Home = () => {
   const [user, setUser] = useState(null);
-  const [showEmail, setShowEmail] = useState(false);
   const canvasRef = useRef(null);
   const { t } = useLanguage();
   
@@ -118,7 +118,6 @@ function twoSum(nums, target) {
   }
   return null; // No solution found
 }`;
-        // Reset to empty string to prevent duplication
         codeBlock.innerHTML = '';
         
         let charIndex = 0;
@@ -144,11 +143,10 @@ function twoSum(nums, target) {
         codeObserver.observe(codeContainer);
     }
 
-    // --- CLEANUP FUNCTION (Crucial for React Strict Mode) ---
     return () => {
-        observer.disconnect(); // Stop watching scroll elements
-        if (codeObserver) codeObserver.disconnect(); // Stop watching code block
-        if (typeTimeout) clearTimeout(typeTimeout); // Stop the typing loop
+        observer.disconnect();
+        if (codeObserver) codeObserver.disconnect();
+        if (typeTimeout) clearTimeout(typeTimeout);
     };
   }, []);
 
@@ -271,21 +269,12 @@ function twoSum(nums, target) {
               <p className="text-slate-400 max-w-3xl mx-auto mb-16 text-base sm:text-lg">
                 {t('sponsors_desc')}
               </p>
-              <div className="max-w-4xl mx-auto glass-card rounded-3xl p-16 mb-12 shadow-2xl border border-white/5 relative overflow-hidden">
+              <div className="max-w-4xl mx-auto glass-card rounded-3xl p-16 shadow-2xl border border-white/5 relative overflow-hidden flex items-center justify-center">
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-sky-500/5 blur-[100px] pointer-events-none"></div>
-                  <p className="text-2xl font-black text-slate-400 tracking-widest uppercase mb-4">{t('sponsors_placeholder')}</p>
-                  <div className="h-[3px] w-24 bg-gradient-to-r from-emerald-500 to-sky-500 mx-auto rounded-full"></div>
+                  
+                  {/* Partner Logo */}
+                  <img src={partnerLogo} alt="Partner Logo" className="h-24 w-auto object-contain relative z-10 opacity-90 hover:opacity-100 transition-opacity" />
               </div>
-              
-              {!showEmail ? (
-                <button onClick={() => setShowEmail(true)} className="bg-gradient-to-r from-emerald-400 to-sky-400 hover:from-emerald-500 hover:to-sky-500 text-white font-bold py-3.5 px-10 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-500/20 inline-block">
-                    {t('sponsors_btn')}
-                </button>
-              ) : (
-                <p className="mt-6 text-2xl text-sky-400 font-black tracking-widest animate-bounce">
-                    Enkhbayare111@gmail.com
-                </p>
-              )}
           </div>
       </section>
 

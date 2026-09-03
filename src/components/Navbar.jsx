@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from '../firebase';
 import { useLanguage } from '../context/LanguageContext';
+import partnerLogo from '../assets/partner-logo.png'; // Add your partner logo file here
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -41,10 +42,24 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 bg-[#030712]/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-black tracking-wider gradient-text hover:opacity-90 transition-opacity">
-          Mongol Code Academy
-        </Link>
+        {/* Logo & Partner Logo Section */}
+        <div className="flex items-center space-x-3 sm:space-x-4">
+          <Link to="/" className="text-2xl font-black tracking-wider gradient-text hover:opacity-90 transition-opacity">
+            Mongol Code Academy
+          </Link>
+          
+          {/* Divider */}
+          <div className="h-5 w-[1px] bg-white/10"></div>
+
+          {/* Partner Logo (Adjusted size here) */}
+          <Link to="/" className="flex items-center">
+            <img 
+              src={partnerLogo} 
+              alt="Partner Logo" 
+              className="h-20 sm:h-22 w-auto object-contain opacity-95 hover:opacity-100 transition-opacity" 
+            />
+          </Link>
+        </div>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-4">
