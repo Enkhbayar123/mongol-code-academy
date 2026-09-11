@@ -50,8 +50,16 @@ def findClosestNumber(nums):
 
 print(findClosestNumber(nums))`,
         testCases: [
-            { input: "-4 -2 1 4 8", output: "1" },
-            { input: "2 -1 1", output: "1" }
+          { input: "-4 -2 1 4 8", output: "1" },
+          { input: "2 -1 1", output: "1" },
+          { input: "-100000", output: "-100000" },
+          { input: "0", output: "0" },
+          { input: "-2 -1 1 2", output: "1" },
+          { input: "-5 5", output: "5" },
+          { input: "2 1 -1", output: "1" },
+          { input: "-10 -5 -2 -1", output: "-1" },
+          { input: "10 5 2 1", output: "1" },
+          { input: "-3 3 -2 2 -1 1", output: "1" }
         ]
       },
       {
@@ -88,8 +96,16 @@ def mergeAlternately(word1, word2):
 
 print(mergeAlternately(word1, word2))`,
         testCases: [
-            { input: "abc\npqr", output: "apbqcr" },
-            { input: "ab\npqrs", output: "apbqrs" }
+          { input: "abc\npqr", output: "apbqcr" },
+          { input: "ab\npqrs", output: "apbqrs" },
+          { input: "abcd\npq", output: "apbqcd" },
+          { input: "a\nb", output: "ab" },
+          { input: "a\nxyz", output: "axyz" },
+          { input: "xyz\na", output: "xayz" },
+          { input: "hello\nworld", output: "hweolrllod" },
+          { input: "abcde\nfghij", output: "afbgchdiej" },
+          { input: "coding\nacademy", output: "caocdaedmey" },
+          { input: "leetcode\ncode", output: "lcewertoicdoede" }
         ]
       },
       {
@@ -122,8 +138,16 @@ def containsDuplicate(nums):
 
 print("true" if containsDuplicate(nums) else "false")`,
         testCases: [
-            { input: "[1,2,3,1]", output: "true" },
-            { input: "[1,2,3,4]", output: "false" }
+          { input: "[1,2,3,1]", output: "true" },
+          { input: "[1,2,3,4]", output: "false" },
+          { input: "[1,1,1,3,3,4,3,2,4,2]", output: "true" },
+          { input: "[1]", output: "false" },
+          { input: "[0,0]", output: "true" },
+          { input: "[-1,-2,-3,-4]", output: "false" },
+          { input: "[-1,-2,-3,-1]", output: "true" },
+          { input: "[10,20,30,40,50,60,70,80,90,100]", output: "false" },
+          { input: "[10,20,30,40,50,60,70,80,90,10]", output: "true" },
+          { input: "[1000000000,1000000000]", output: "true" }
         ]
       },
       {
@@ -154,8 +178,16 @@ def isAnagram(s, t):
 
 print("true" if isAnagram(s, t) else "false")`,
         testCases: [
-            { input: "anagram\nnagaram", output: "true" },
-            { input: "rat\ncar", output: "false" }
+          { input: "anagram\nnagaram", output: "true" },
+          { input: "rat\ncar", output: "false" },
+          { input: "a\na", output: "true" },
+          { input: "a\nb", output: "false" },
+          { input: "ab\na", output: "false" },
+          { input: "listen\nsilent", output: "true" },
+          { input: "triangle\nintegral", output: "true" },
+          { input: "apple\npale", output: "false" },
+          { input: "aabbcc\nccbbaa", output: "true" },
+          { input: "aabbcc\naabbcd", output: "false" }
         ]
       },
       {
@@ -195,8 +227,16 @@ if res:
 else:
     print("[]")`,
         testCases: [
-            { input: "[2,7,11,15]\n9", output: "[0,1]" },
-            { input: "[3,2,4]\n6", output: "[1,2]" }
+          { input: "[2,7,11,15]\n9", output: "[0,1]" },
+          { input: "[3,2,4]\n6", output: "[1,2]" },
+          { input: "[3,3]\n6", output: "[0,1]" },
+          { input: "[-1,-2,-3,-4,-5]\n-8", output: "[2,4]" },
+          { input: "[0,4,3,0]\n0", output: "[0,3]" },
+          { input: "[-3,4,3,90]\n0", output: "[0,2]" },
+          { input: "[1,5,1,5]\n10", output: "[1,3]" },
+          { input: "[2,5,5,11]\n10", output: "[1,2]" },
+          { input: "[1000000,500,1000000]\n2000000", output: "[0,2]" },
+          { input: "[1,2,3,4,5,6]\n11", output: "[4,5]" }
         ]
       },
       {
@@ -228,8 +268,16 @@ def romanToInt(s):
 
 print(romanToInt(s))`,
         testCases: [
-            { input: "III", output: "3" },
-            { input: "MCMXCIV", output: "1994" }
+          { input: "III", output: "3" },
+          { input: "MCMXCIV", output: "1994" },
+          { input: "LVIII", output: "58" },
+          { input: "IV", output: "4" },
+          { input: "IX", output: "9" },
+          { input: "XL", output: "40" },
+          { input: "XC", output: "90" },
+          { input: "CD", output: "400" },
+          { input: "CM", output: "900" },
+          { input: "MMMCMXCIX", output: "3999" }
         ]
       },
       {
@@ -251,7 +299,8 @@ Output: false</pre>
         defaultLanguage: "python",
         starterCode: `import sys
 lines = sys.stdin.read().splitlines()
-s, t = lines[0], lines[1]
+s = lines[0] if len(lines) > 0 else ""
+t = lines[1] if len(lines) > 1 else ""
 
 def isSubsequence(s, t):
     # Write your code here
@@ -259,8 +308,16 @@ def isSubsequence(s, t):
 
 print("true" if isSubsequence(s, t) else "false")`,
         testCases: [
-            { input: "abc\nahbgdc", output: "true" },
-            { input: "axc\nahbgdc", output: "false" }
+          { input: "abc\nahbgdc", output: "true" },
+          { input: "axc\nahbgdc", output: "false" },
+          { input: "\nahbgdc", output: "true" },
+          { input: "b\nc", output: "false" },
+          { input: "ace\nabcde", output: "true" },
+          { input: "aec\nabcde", output: "false" },
+          { input: "aaaaaa\nbbaaaa", output: "false" },
+          { input: "sing\nsomething", output: "true" },
+          { input: "code\nmongolcodeacademy", output: "true" },
+          { input: "abc\nabc", output: "true" }
         ]
       },
       {
@@ -302,7 +359,16 @@ if res:
 else:
     print("[]")`,
         testCases: [
-            { input: '["eat","tea","tan","ate","nat","bat"]', output: '[["bat"],["nat","tan"],["ate","eat","tea"]]' }
+          { input: '["eat","tea","tan","ate","nat","bat"]', output: '[["bat"],["nat","tan"],["ate","eat","tea"]]' },
+          { input: '[""]', output: '[[""]]' },
+          { input: '["a"]', output: '[["a"]]' },
+          { input: '["a","b","a"]', output: '[["b"],["a","a"]]' },
+          { input: '["ab","ba","bac","cab","cba"]', output: '[["ab","ba"],["bac","cab","cba"]]' },
+          { input: '["rat","tar","art"]', output: '[["art","rat","tar"]]' },
+          { input: '["abc","def","ghi"]', output: '[["abc"],["def"],["ghi"]]' },
+          { input: '["listen","silent","enlist"]', output: '[["enlist","listen","silent"]]' },
+          { input: '["stop","pots","tops","spot"]', output: '[["pots","spot","stop","tops"]]' },
+          { input: '["a",""]', output: '[[""],["a"]]' }
         ]
       },
       {
@@ -334,7 +400,16 @@ def productExceptSelf(nums):
 
 print(json.dumps(productExceptSelf(nums)).replace(" ", ""))`,
         testCases: [
-            { input: "[1,2,3,4]", output: "[24,12,8,6]" }
+          { input: "[1,2,3,4]", output: "[24,12,8,6]" },
+          { input: "[-1,1,0,-3,3]", output: "[0,0,9,0,0]" },
+          { input: "[1,2]", output: "[2,1]" },
+          { input: "[0,0]", output: "[0,0]" },
+          { input: "[1,0]", output: "[0,1]" },
+          { input: "[-1,-1,-1,-1]", output: "[-1,-1,-1,-1]" },
+          { input: "[2,3,4,5]", output: "[60,40,30,24]" },
+          { input: "[5,2,3,4,0]", output: "[0,0,0,0,120]" },
+          { input: "[1,1,1,1,1]", output: "[1,1,1,1,1]" },
+          { input: "[-2,-3,-4]", output: "[12,8,6]" }
         ]
       },
       {
@@ -367,7 +442,16 @@ def longestConsecutive(nums):
 
 print(longestConsecutive(nums))`,
         testCases: [
-            { input: "[100,4,200,1,3,2]", output: "4" }
+          { input: "[100,4,200,1,3,2]", output: "4" },
+          { input: "[0,3,7,2,5,8,4,6,0,1]", output: "9" },
+          { input: "[]", output: "0" },
+          { input: "[1]", output: "1" },
+          { input: "[1,2,0,1]", output: "3" },
+          { input: "[9,1,4,7,3,-1,0,5,8,-1,6]", output: "7" },
+          { input: "[10,20,30,40]", output: "1" },
+          { input: "[5,4,3,2,1]", output: "5" },
+          { input: "[-5,-4,-3,-2,-1,0,1]", output: "7" },
+          { input: "[1,2,3,10,11,12,13,14]", output: "5" }
         ]
       },
       {
@@ -398,7 +482,16 @@ def spiralOrder(matrix):
 
 print(json.dumps(spiralOrder(matrix)).replace(" ", ""))`,
         testCases: [
-            { input: "[[1,2,3],[4,5,6],[7,8,9]]", output: "[1,2,3,6,9,8,7,4,5]" }
+          { input: "[[1,2,3],[4,5,6],[7,8,9]]", output: "[1,2,3,6,9,8,7,4,5]" },
+          { input: "[[1,2,3,4],[5,6,7,8],[9,10,11,12]]", output: "[1,2,3,4,8,12,11,10,9,5,6,7]" },
+          { input: "[[1]]", output: "[1]" },
+          { input: "[[1,2],[3,4]]", output: "[1,2,4,3]" },
+          { input: "[[1,2,3,4,5]]", output: "[1,2,3,4,5]" },
+          { input: "[[1],[2],[3],[4],[5]]", output: "[1,2,3,4,5]" },
+          { input: "[[1,2],[3,4],[5,6]]", output: "[1,2,4,6,5,3]" },
+          { input: "[[1,2,3],[4,5,6]]", output: "[1,2,3,6,5,4]" },
+          { input: "[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]", output: "[1,2,3,4,8,12,16,15,14,13,9,5,6,7,11,10]" },
+          { input: "[[3],[2]]", output: "[3,2]" }
         ]
       }
     ]
@@ -435,7 +528,16 @@ def isPalindrome(s):
 
 print("true" if isPalindrome(s) else "false")`,
         testCases: [
-            { input: "A man, a plan, a canal: Panama", output: "true" }
+          { input: "A man, a plan, a canal: Panama", output: "true" },
+          { input: "race a car", output: "false" },
+          { input: " ", output: "true" },
+          { input: "ab_a", output: "true" },
+          { input: "0P", output: "false" },
+          { input: "a.", output: "true" },
+          { input: "Madam, I'm Adam", output: "true" },
+          { input: "Was it a car or a cat I saw?", output: "true" },
+          { input: "No lemon, no melon", output: "true" },
+          { input: "12321", output: "true" }
         ]
       },
       {
@@ -471,7 +573,16 @@ def twoSum(numbers, target):
 
 print(json.dumps(twoSum(numbers, target)).replace(" ", ""))`,
         testCases: [
-            { input: "[2,7,11,15]\n9", output: "[1,2]" }
+          { input: "[2,7,11,15]\n9", output: "[1,2]" },
+          { input: "[2,3,4]\n6", output: "[1,3]" },
+          { input: "[-1,0]\n-1", output: "[1,2]" },
+          { input: "[1,2,3,4,4,9,56,90]\n8", output: "[4,5]" },
+          { input: "[1,2,7,11,15]\n9", output: "[2,3]" },
+          { input: "[-5,-3,0,2,4,6,8]\n5", output: "[2,7]" },
+          { input: "[0,0,3,4]\n0", output: "[1,2]" },
+          { input: "[-10,-8,-2,1,2,5,6]\n-1", output: "[3,4]" },
+          { input: "[5,25,75]\n100", output: "[2,3]" },
+          { input: "[1,3,5,7,9,11]\n20", output: "[5,6]" }
         ]
       },
       {
@@ -501,9 +612,24 @@ def threeSum(nums):
     # Write your code here
     pass
 
-print(json.dumps(threeSum(nums)).replace(" ", ""))`,
+res = threeSum(nums)
+if res:
+    final_res = [sorted(triplet) for triplet in res]
+    final_res.sort()
+    print(json.dumps(final_res).replace(" ", ""))
+else:
+    print("[]")`,
         testCases: [
-            { input: "[-1,0,1,2,-1,-4]", output: "[[-1,-1,2],[-1,0,1]]" }
+          { input: "[-1,0,1,2,-1,-4]", output: "[[-1,-1,2],[-1,0,1]]" },
+          { input: "[0,1,1]", output: "[]" },
+          { input: "[0,0,0]", output: "[[0,0,0]]" },
+          { input: "[0,0,0,0]", output: "[[0,0,0]]" },
+          { input: "[-2,0,1,1,2]", output: "[[-2,0,2],[-2,1,1]]" },
+          { input: "[-4,-2,-2,-2,0,1,2,2,2,3,3,4,4,6,6]", output: "[[-4,-2,6],[-4,0,4],[-4,1,3],[-4,2,2],[-2,-2,4],[-2,0,2]]" },
+          { input: "[1,2,-2,-1]", output: "[]" },
+          { input: "[-1,0,1]", output: "[[-1,0,1]]" },
+          { input: "[-2,0,0,2,2]", output: "[[-2,0,2]]" },
+          { input: "[3,0,-2,-1,1,2]", output: "[[-2,-1,3],[-2,0,2],[-1,0,1]]" }
         ]
       },
       {
@@ -535,7 +661,16 @@ def maxArea(height):
 
 print(maxArea(height))`,
         testCases: [
-            { input: "[1,8,6,2,5,4,8,3,7]", output: "49" }
+          { input: "[1,8,6,2,5,4,8,3,7]", output: "49" },
+          { input: "[1,1]", output: "1" },
+          { input: "[4,3,2,1,4]", output: "16" },
+          { input: "[1,2,1]", output: "2" },
+          { input: "[2,3,4,5,18,17,6]", output: "17" },
+          { input: "[1,2,4,3]", output: "4" },
+          { input: "[1,8,100,2,100,4,8,3,7]", output: "200" },
+          { input: "[6,9,3,4,5,8]", output: "32" },
+          { input: "[10,9,8,7,6,5,4,3,2,1]", output: "25" },
+          { input: "[1,3,2,5,25,24,5]", output: "24" }
         ]
       },
       {
@@ -566,7 +701,16 @@ def trap(height):
 
 print(trap(height))`,
         testCases: [
-            { input: "[0,1,0,2,1,0,1,3,2,1,2,1]", output: "6" }
+          { input: "[0,1,0,2,1,0,1,3,2,1,2,1]", output: "6" },
+          { input: "[4,2,0,3,2,5]", output: "9" },
+          { input: "[4,2,3]", output: "1" },
+          { input: "[3,0,2,0,4]", output: "7" },
+          { input: "[2,0,2]", output: "2" },
+          { input: "[5,4,1,2]", output: "1" },
+          { input: "[1,2,3,4,5]", output: "0" },
+          { input: "[5,4,3,2,1]", output: "0" },
+          { input: "[0,0,0,0]", output: "0" },
+          { input: "[5,1,2,1,5]", output: "11" }
         ]
       }
     ]
@@ -605,8 +749,16 @@ def isValid(s):
 
 print("true" if isValid(s) else "false")`,
         testCases: [
-            { input: "()", output: "true" },
-            { input: "()[]{}", output: "true" }
+          { input: "()", output: "true" },
+          { input: "()[]{}", output: "true" },
+          { input: "(]", output: "false" },
+          { input: "([)]", output: "false" },
+          { input: "{[]}", output: "true" },
+          { input: "", output: "true" },
+          { input: "(", output: "false" },
+          { input: "]", output: "false" },
+          { input: "(((((())))))", output: "true" },
+          { input: "{[()]}", output: "true" }
         ]
       },
       {
@@ -633,27 +785,36 @@ def evalRPN(tokens):
 
 print(evalRPN(tokens))`,
         testCases: [
-            { input: '["2","1","+","3","*"]', output: "9" }
+          { input: '["2","1","+","3","*"]', output: "9" },
+          { input: '["4","13","5","/","+"]', output: "6" },
+          { input: '["10","6","9","3","+","-11","*","/","*","17","+","5","+"]', output: "22" },
+          { input: '["3"]', output: "3" },
+          { input: '["4","3","-"]', output: "1" },
+          { input: '["3","4","-"]', output: "-1" },
+          { input: '["5","1","2","+","4","*","+","3","-"]', output: "14" },
+          { input: '["2","3","*"]', output: "6" },
+          { input: '["10","5","/"]', output: "2" },
+          { input: '["4","-2","/","2","-3","-","-"]', output: "-7" }
         ]
       },
       {
-          id: 'generate-parentheses',
-          name: 'Хаалт үүсгэх', 
-          videoId: 'mjFC9L30MW4',
-          description: `
-            <p class="mb-4"><code>n</code> хос хаалт өгөгдсөн бол зөв бүтэцтэй хаалтны бүх боломжит хувилбарыг үүсгэх функц бич.</p>
-            <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-              <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-              <pre class="text-sm">Input: n = 3
+        id: 'generate-parentheses',
+        name: 'Хаалт үүсгэх', 
+        videoId: 'mjFC9L30MW4',
+        description: `
+          <p class="mb-4"><code>n</code> хос хаалт өгөгдсөн бол зөв бүтэцтэй хаалтны бүх боломжит хувилбарыг үүсгэх функц бич.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: n = 3
 Output: ["((()))","(()())","(())()","()(())","()()()"]</pre>
-            </div>
-            <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-              <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
-              <pre class="text-sm">Input: n = 1
+          </div>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
+            <pre class="text-sm">Input: n = 1
 Output: ["()"]</pre>
-            </div>`,
-          defaultLanguage: "python",
-          starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 n = int(sys.stdin.read().strip())
@@ -662,29 +823,43 @@ def generateParenthesis(n):
     # Write your code here
     pass
 
-print(json.dumps(generateParenthesis(n)).replace(" ", ""))`,
-          testCases: [
-              { input: "3", output: '["((()))","(()())","(())()","()(())","()()()"]' }
-          ]
+res = generateParenthesis(n)
+if res:
+    res.sort()
+    print(json.dumps(res).replace(" ", ""))
+else:
+    print("[]")`,
+        testCases: [
+          { input: "3", output: '["((()))","(()())","(())()","()(())","()()()"]' },
+          { input: "1", output: '["()"]' },
+          { input: "2", output: '["(())","()()"]' },
+          { input: "4", output: '["(((())))","((()()))","((())())","((()))()","(()(()))","(()()())","(()())()","(())(())","(())()()","()((()))","()(()())","()(())()","()()(())","()()()()"]' },
+          { input: "0", output: '[""]' },
+          { input: "1", output: '["()"]' },
+          { input: "2", output: '["(())","()()"]' },
+          { input: "3", output: '["((()))","(()())","(())()","()(())","()()()"]' },
+          { input: "4", output: '["(((())))","((()()))","((())())","((()))()","(()(()))","(()()())","(()())()","(())(())","(())()()","()((()))","()(()())","()(())()","()()(())","()()()()"]' },
+          { input: "2", output: '["(())","()()"]' }
+        ]
       },
       {
-          id: 'daily-temperatures',
-          name: 'Өдөр тутмын температур', 
-          videoId: '862QzHRxUXE',
-          description: `
-            <p class="mb-4">Өдөр тутмын температурыг илэрхийлэх <code>temperatures</code> бүхэл тоон массив өгөгдсөн бол <code>answer[i]</code> нь <code>i</code>-р өдрөөс хойш илүү дулаан температур авахын тулд хүлээх өдрийн тоо байх <code>answer</code> массивыг буцаа. Хэрэв ирээдүйд боломжгүй бол <code>answer[i] == 0</code> байна.</p>
-            <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-              <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-              <pre class="text-sm">Input: temperatures = [73,74,75,71,69,72,76,73]
+        id: 'daily-temperatures',
+        name: 'Өдөр тутмын температур', 
+        videoId: '862QzHRxUXE',
+        description: `
+          <p class="mb-4">Өдөр тутмын температурыг илэрхийлэх <code>temperatures</code> бүхэл тоон массив өгөгдсөн бол <code>answer[i]</code> нь <code>i</code>-р өдрөөс хойш илүү дулаан температур авахын тулд хүлээх өдрийн тоо байх <code>answer</code> массивыг буцаа. Хэрэв ирээдүйд боломжгүй бол <code>answer[i] == 0</code> байна.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: temperatures = [73,74,75,71,69,72,76,73]
 Output: [1,1,4,2,1,1,0,0]</pre>
-            </div>
-            <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-              <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
-              <pre class="text-sm">Input: temperatures = [30,40,50,60]
+          </div>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
+            <pre class="text-sm">Input: temperatures = [30,40,50,60]
 Output: [1,1,1,0]</pre>
-            </div>`,
-          defaultLanguage: "python",
-          starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 temps = json.loads(sys.stdin.read().strip())
@@ -694,36 +869,45 @@ def dailyTemperatures(temperatures):
     pass
 
 print(json.dumps(dailyTemperatures(temps)).replace(" ", ""))`,
-          testCases: [
-              { input: "[73,74,75,71,69,72,76,73]", output: "[1,1,4,2,1,1,0,0]" }
-          ]
+        testCases: [
+          { input: "[73,74,75,71,69,72,76,73]", output: "[1,1,4,2,1,1,0,0]" },
+          { input: "[30,40,50,60]", output: "[1,1,1,0]" },
+          { input: "[30,60,90]", output: "[1,1,0]" },
+          { input: "[90,80,70,60]", output: "[0,0,0,0]" },
+          { input: "[50]", output: "[0]" },
+          { input: "[50,50,50]", output: "[0,0,0]" },
+          { input: "[89,62,70,58,47,47,46,76,100,70]", output: "[8,1,5,4,3,2,1,1,0,0]" },
+          { input: "[30,30,40]", output: "[2,1,0]" },
+          { input: "[40,35,30,50]", output: "[3,2,1,0]" },
+          { input: "[100,99,98,97,101]", output: "[4,3,2,1,0]" }
+        ]
       }
     ]
   },
   {
     category: 'Binary Search',
     problems: [
-        { 
-            id: 'binary-search', 
-            name: 'Бинар хайлт', 
-            videoId: 'tRarHXuFXDk', 
-            description: `
-              <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн бүхэл тоон <code>nums</code> массив болон <code>target</code> бүхэл тоо өгөгдсөн. <code>nums</code> дотроос <code>target</code>-ийг хайх функц бич. Хэрэв <code>target</code> олдвол индексийг нь, үгүй бол <code>-1</code> буцаа.</p>
-              <p class="mb-4">Та <code>O(log n)</code> хугацаанд ажиллах алгоритм бичих ёстой.</p>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                <pre class="text-sm">Input: nums = [-1,0,3,5,9,12], target = 9
+      { 
+        id: 'binary-search', 
+        name: 'Бинар хайлт', 
+        videoId: 'tRarHXuFXDk', 
+        description: `
+          <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн бүхэл тоон <code>nums</code> массив болон <code>target</code> бүхэл тоо өгөгдсөн. <code>nums</code> дотроос <code>target</code>-ийг хайх функц бич. Хэрэв <code>target</code> олдвол индексийг нь, үгүй бол <code>-1</code> буцаа.</p>
+          <p class="mb-4">Та <code>O(log n)</code> хугацаанд ажиллах алгоритм бичих ёстой.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: nums = [-1,0,3,5,9,12], target = 9
 Output: 4
 Тайлбар: 9 нь nums дотор байгаа бөгөөд индекс нь 4</pre>
-              </div>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
-                <pre class="text-sm">Input: nums = [-1,0,3,5,9,12], target = 2
+          </div>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
+            <pre class="text-sm">Input: nums = [-1,0,3,5,9,12], target = 2
 Output: -1
 Тайлбар: 2 нь nums дотор байхгүй тул -1 буцаана</pre>
-              </div>`,
-            defaultLanguage: "python",
-            starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 lines = sys.stdin.read().splitlines()
@@ -735,29 +919,37 @@ def search(nums, target):
     pass
 
 print(search(nums, target))`,
-            testCases: [
-                { input: "[-1,0,3,5,9,12]\n9", output: "4" },
-                { input: "[-1,0,3,5,9,12]\n2", output: "-1" }
-            ]
-        },
-        { 
-            id: 'search-a-2d-matrix', 
-            name: '2D Матрицаас хайх', 
-            videoId: 'z5mNlZnnzZM', 
-            description: `
-              <p class="mb-4">Танд дараах хоёр шинж чанартай <code>m x n</code> хэмжээтэй бүхэл тоон <code>matrix</code> өгөгдсөн:</p>
-              <ul class="list-disc ml-5 mb-4">
-                <li>Мөр бүр үл буурах дарааллаар эрэмбэлэгдсэн.</li>
-                <li>Мөр бүрийн эхний бүхэл тоо нь өмнөх мөрийн сүүлийн тооноос их байна.</li>
-              </ul>
-              <p class="mb-4"><code>target</code> бүхэл тоо өгөгдсөн. Хэрэв <code>target</code> нь <code>matrix</code>-д байвал <code>true</code>, үгүй бол <code>false</code> утгыг буцаа.</p>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                <pre class="text-sm">Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+        testCases: [
+          { input: "[-1,0,3,5,9,12]\n9", output: "4" },
+          { input: "[-1,0,3,5,9,12]\n2", output: "-1" },
+          { input: "[5]\n5", output: "0" },
+          { input: "[5]\n-5", output: "-1" },
+          { input: "[2,5]\n2", output: "0" },
+          { input: "[2,5]\n5", output: "1" },
+          { input: "[1,3,5,7,9,11,13]\n1", output: "0" },
+          { input: "[1,3,5,7,9,11,13]\n13", output: "6" },
+          { input: "[1,3,5,7,9,11,13]\n7", output: "3" },
+          { input: "[1,3,5,7,9,11,13]\n8", output: "-1" }
+        ]
+      },
+      { 
+        id: 'search-a-2d-matrix', 
+        name: '2D Матрицаас хайх', 
+        videoId: 'z5mNlZnnzZM', 
+        description: `
+          <p class="mb-4">Танд дараах хоёр шинж чанартай <code>m x n</code> хэмжээтэй бүхэл тоон <code>matrix</code> өгөгдсөн:</p>
+          <ul class="list-disc ml-5 mb-4">
+            <li>Мөр бүр үл буурах дарааллаар эрэмбэлэгдсэн.</li>
+            <li>Мөр бүрийн эхний бүхэл тоо нь өмнөх мөрийн сүүлийн тооноос их байна.</li>
+          </ul>
+          <p class="mb-4"><code>target</code> бүхэл тоо өгөгдсөн. Хэрэв <code>target</code> нь <code>matrix</code>-д байвал <code>true</code>, үгүй бол <code>false</code> утгыг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
 Output: true</pre>
-              </div>`,
-            defaultLanguage: "python",
-            starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 lines = sys.stdin.read().splitlines()
@@ -769,24 +961,33 @@ def searchMatrix(matrix, target):
     pass
 
 print("true" if searchMatrix(matrix, target) else "false")`,
-            testCases: [
-                { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,60]]\n3", output: "true" }
-            ]
-        },
-        { 
-            id: 'koko-eating-bananas', 
-            name: 'Коко гадил идэж байна', 
-            videoId: '3Ln5PDV6ITw', 
-            description: `
-              <p class="mb-4">Коко гадил идэх дуртай. <code>n</code> сагс гадил байгаа ба <code>i</code>-р сагс <code>piles[i]</code> гадилтай. Харуулууд явсан бөгөөд <code>h</code> цагийн дараа буцаж ирнэ.</p>
-              <p class="mb-4">Коко цагт <code>k</code> гадил идэх хурдаа сонгож болно. Тэрээр <code>h</code> цагийн дотор бүх гадилыг идэж дуусгах хамгийн бага <code>k</code> бүхэл тоог ол.</p>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                <pre class="text-sm">Input: piles = [3,6,7,11], h = 8
+        testCases: [
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,60]]\n3", output: "true" },
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,60]]\n13", output: "false" },
+          { input: "[[1]]\n1", output: "true" },
+          { input: "[[1]]\n2", output: "false" },
+          { input: "[[1,3]]\n3", output: "true" },
+          { input: "[[1],[3]]\n3", output: "true" },
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,50]]\n11", output: "true" },
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,50]]\n50", output: "true" },
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,50]]\n0", output: "false" },
+          { input: "[[1,3,5,7],[10,11,16,20],[23,30,34,50]]\n61", output: "false" }
+        ]
+      },
+      { 
+        id: 'koko-eating-bananas', 
+        name: 'Коко гадил идэж байна', 
+        videoId: '3Ln5PDV6ITw', 
+        description: `
+          <p class="mb-4">Коко гадил идэх дуртай. <code>n</code> сагс гадил байгаа ба <code>i</code>-р сагс <code>piles[i]</code> гадилтай. Харуулууд явсан бөгөөд <code>h</code> цагийн дараа буцаж ирнэ.</p>
+          <p class="mb-4">Коко цагт <code>k</code> гадил идэх хурдаа сонгож болно. Тэрээр <code>h</code> цагийн дотор бүх гадилыг идэж дуусгах хамгийн бага <code>k</code> бүхэл тоог ол.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: piles = [3,6,7,11], h = 8
 Output: 4</pre>
-              </div>`,
-            defaultLanguage: "python",
-            starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 import math
 
@@ -799,29 +1000,38 @@ def minEatingSpeed(piles, h):
     pass
 
 print(minEatingSpeed(piles, h))`,
-            testCases: [
-                { input: "[3,6,7,11]\n8", output: "4" }
-            ]
-        },
-        { 
-            id: 'find-minimum-in-rotated-sorted-array', 
-            name: 'Эргүүлсэн эрэмбэлэгдсэн массивын хамгийн бага утгыг олох', 
-            videoId: 'GmpT8HA8K50', 
-            description: `
-              <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн <code>n</code> урттай массив 1-ээс <code>n</code> удаа эргүүлэгдсэн байж болно. Жишээ нь <code>nums = [0,1,2,4,5,6,7]</code> массив:</p>
-              <ul class="list-disc ml-5 mb-4">
-                <li><code>[4,5,6,7,0,1,2]</code> (4 удаа эргүүлсэн).</li>
-                <li><code>[0,1,2,4,5,6,7]</code> (7 удаа эргүүлсэн).</li>
-              </ul>
-              <p class="mb-4"><strong>Давтагдахгүй</strong> элементүүдтэй эргүүлсэн эрэмбэлэгдсэн <code>nums</code> массив өгөгдсөн бол уг массивын хамгийн бага элементийг буцаа.</p>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                <pre class="text-sm">Input: nums = [3,4,5,1,2]
+        testCases: [
+          { input: "[3,6,7,11]\n8", output: "4" },
+          { input: "[30,11,23,4,20]\n5", output: "30" },
+          { input: "[30,11,23,4,20]\n6", output: "23" },
+          { input: "[312884470]\n312884469", output: "2" },
+          { input: "[1,1,1,1]\n4", output: "1" },
+          { input: "[1000000000]\n2", output: "500000000" },
+          { input: "[4,3,2,1]\n4", output: "4" },
+          { input: "[2,2]\n4", output: "1" },
+          { input: "[10]\n5", output: "2" },
+          { input: "[5,10,15,20]\n7", output: "10" }
+        ]
+      },
+      { 
+        id: 'find-minimum-in-rotated-sorted-array', 
+        name: 'Эргүүлсэн эрэмбэлэгдсэн массивын хамгийн бага утгыг олох', 
+        videoId: 'GmpT8HA8K50', 
+        description: `
+          <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн <code>n</code> урттай массив 1-ээс <code>n</code> удаа эргүүлэгдсэн байж болно. Жишээ нь <code>nums = [0,1,2,4,5,6,7]</code> массив:</p>
+          <ul class="list-disc ml-5 mb-4">
+            <li><code>[4,5,6,7,0,1,2]</code> (4 удаа эргүүлсэн).</li>
+            <li><code>[0,1,2,4,5,6,7]</code> (7 удаа эргүүлсэн).</li>
+          </ul>
+          <p class="mb-4"><strong>Давтагдахгүй</strong> элементүүдтэй эргүүлсэн эрэмбэлэгдсэн <code>nums</code> массив өгөгдсөн бол уг массивын хамгийн бага элементийг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: nums = [3,4,5,1,2]
 Output: 1
 Тайлбар: Анхны массив нь [1,2,3,4,5] байсан ба 3 удаа эргүүлэгдсэн.</pre>
-              </div>`,
-            defaultLanguage: "python",
-            starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 nums = json.loads(sys.stdin.read().strip())
@@ -831,25 +1041,34 @@ def findMin(nums):
     pass
 
 print(findMin(nums))`,
-            testCases: [
-                { input: "[3,4,5,1,2]", output: "1" }
-            ]
-        },
-        { 
-            id: 'search-in-rotated-sorted-array', 
-            name: 'Эргүүлсэн эрэмбэлэгдсэн массиваас хайх', 
-            videoId: '6Zp3OVr1_2E', 
-            description: `
-              <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн (<strong>ялгаатай</strong> утгуудтай) бүхэл тоон <code>nums</code> массив өгөгдсөн.</p>
-              <p class="mb-4"><code>nums</code> нь мэдэгдэхгүй индексээр эргүүлэгдсэн байж болно.</p>
-              <p class="mb-4"><code>target</code> тоо <code>nums</code>-д байвал индексийг, байхгүй бол <code>-1</code>-ийг буцаа.</p>
-              <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                <pre class="text-sm">Input: nums = [4,5,6,7,0,1,2], target = 0
+        testCases: [
+          { input: "[3,4,5,1,2]", output: "1" },
+          { input: "[4,5,6,7,0,1,2]", output: "0" },
+          { input: "[11,13,15,17]", output: "11" },
+          { input: "[2,1]", output: "1" },
+          { input: "[1]", output: "1" },
+          { input: "[3,1,2]", output: "1" },
+          { input: "[5,1,2,3,4]", output: "1" },
+          { input: "[2,3,4,5,1]", output: "1" },
+          { input: "[10,20,30,40,50]", output: "10" },
+          { input: "[4,5,1,2,3]", output: "1" }
+        ]
+      },
+      { 
+        id: 'search-in-rotated-sorted-array', 
+        name: 'Эргүүлсэн эрэмбэлэгдсэн массиваас хайх', 
+        videoId: '6Zp3OVr1_2E', 
+        description: `
+          <p class="mb-4">Өсөх дарааллаар эрэмбэлэгдсэн (<strong>ялгаатай</strong> утгуудтай) бүхэл тоон <code>nums</code> массив өгөгдсөн.</p>
+          <p class="mb-4"><code>nums</code> нь мэдэгдэхгүй индексээр эргүүлэгдсэн байж болно.</p>
+          <p class="mb-4"><code>target</code> тоо <code>nums</code>-д байвал индексийг, байхгүй бол <code>-1</code>-ийг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: nums = [4,5,6,7,0,1,2], target = 0
 Output: 4</pre>
-              </div>`,
-            defaultLanguage: "python",
-            starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 lines = sys.stdin.read().splitlines()
@@ -861,31 +1080,40 @@ def search(nums, target):
     pass
 
 print(search(nums, target))`,
-            testCases: [
-                { input: "[4,5,6,7,0,1,2]\n0", output: "4" }
-            ]
-        }
+        testCases: [
+          { input: "[4,5,6,7,0,1,2]\n0", output: "4" },
+          { input: "[4,5,6,7,0,1,2]\n3", output: "-1" },
+          { input: "[1]\n0", output: "-1" },
+          { input: "[1]\n1", output: "0" },
+          { input: "[3,1]\n1", output: "1" },
+          { input: "[5,1,3]\n5", output: "0" },
+          { input: "[4,5,6,7,8,1,2,3]\n8", output: "4" },
+          { input: "[1,3]\n3", output: "1" },
+          { input: "[6,7,1,2,3,4,5]\n6", output: "0" },
+          { input: "[6,7,1,2,3,4,5]\n5", output: "6" }
+        ]
+      }
     ]
   },
   {
-      category: 'Sliding Window',
-      problems: [
-          { 
-              id: 'best-time-to-buy-and-sell-stock', 
-              name: 'Хувьцаа авч, зарахад тохиромжтой үе', 
-              videoId: '-_MDt81x0yY', 
-              description: `
-                <p class="mb-4"><code>prices</code> массив өгөгдсөн ба <code>prices[i]</code> нь <code>i</code>-р өдрийн хувьцааны үнэ юм.</p>
-                <p class="mb-4">Та нэг өдөр хувьцаа худалдан авч, <strong>ирээдүйн өөр нэг өдөр</strong> түүнийгээ зарж ашгаа хамгийн их байлгахыг зорьж байна.</p>
-                <p class="mb-4">Энэ гүйлгээнээс олж болох хамгийн их ашгийг буцаа. Хэрэв ашиг олох боломжгүй бол <code>0</code>-ийг буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: prices = [7,1,5,3,6,4]
+    category: 'Sliding Window',
+    problems: [
+      { 
+        id: 'best-time-to-buy-and-sell-stock', 
+        name: 'Хувьцаа авч, зарахад тохиромжтой үе', 
+        videoId: '-_MDt81x0yY', 
+        description: `
+          <p class="mb-4"><code>prices</code> массив өгөгдсөн ба <code>prices[i]</code> нь <code>i</code>-р өдрийн хувьцааны үнэ юм.</p>
+          <p class="mb-4">Та нэг өдөр хувьцаа худалдан авч, <strong>ирээдүйн өөр нэг өдөр</strong> түүнийгээ зарж ашгаа хамгийн их байлгахыг зорьж байна.</p>
+          <p class="mb-4">Энэ гүйлгээнээс олж болох хамгийн их ашгийг буцаа. Хэрэв ашиг олох боломжгүй бол <code>0</code>-ийг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: prices = [7,1,5,3,6,4]
 Output: 5
 Тайлбар: 2 дахь өдөр авч (үнэ = 1) 5 дахь өдөр зарна (үнэ = 6), ашиг = 6-1 = 5.</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 prices = json.loads(sys.stdin.read().strip())
@@ -895,32 +1123,40 @@ def maxProfit(prices):
     pass
 
 print(maxProfit(prices))`,
-              testCases: [
-                  { input: "[7,1,5,3,6,4]", output: "5" }
-              ]
-          },
-          { 
-              id: 'longest-substring-without-repeating-characters', 
-              name: 'Давтагдах тэмдэгтгүй хамгийн урт дэд мөр', 
-              videoId: 'V0rC26e5o7Y', 
-              description: `
-                <p class="mb-4"><code>s</code> тэмдэгт мөр өгөгдсөн бол тэмдэгт давтагдаагүй <strong>хамгийн урт дэд мөрийн</strong> (substring) уртыг ол.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: s = "abcabcbb"
+        testCases: [
+          { input: "[7,1,5,3,6,4]", output: "5" },
+          { input: "[7,6,4,3,1]", output: "0" },
+          { input: "[1,2]", output: "1" },
+          { input: "[2,4,1]", output: "2" },
+          { input: "[1]", output: "0" },
+          { input: "[3,2,6,5,0,3]", output: "4" },
+          { input: "[2,1,2,1,0,1,2]", output: "2" },
+          { input: "[3,3,3,3,3]", output: "0" },
+          { input: "[1,4,2]", output: "3" },
+          { input: "[2,1,4]", output: "3" }
+        ]
+      },
+      { 
+        id: 'longest-substring-without-repeating-characters', 
+        name: 'Давтагдах тэмдэгтгүй хамгийн урт дэд мөр', 
+        videoId: 'V0rC26e5o7Y', 
+        description: `
+          <p class="mb-4"><code>s</code> тэмдэгт мөр өгөгдсөн бол тэмдэгт давтагдаагүй <strong>хамгийн урт дэд мөрийн</strong> (substring) уртыг ол.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: s = "abcabcbb"
 Output: 3
 Тайлбар: Хариулт нь "abc", урт нь 3.</pre>
-                </div>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
-                  <pre class="text-sm">Input: s = "bbbbb"
+          </div>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 2:</p>
+            <pre class="text-sm">Input: s = "bbbbb"
 Output: 1
 Тайлбар: Хариулт нь "b", урт нь 1.</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 s = sys.stdin.read().strip()
-# Handle case if s is empty string passed as argument
 if s == '""': s = ""
 
 def lengthOfLongestSubstring(s):
@@ -928,38 +1164,44 @@ def lengthOfLongestSubstring(s):
     pass
 
 print(lengthOfLongestSubstring(s))`,
-              testCases: [
-                  { input: "abcabcbb", output: "3" },
-                  { input: "bbbbb", output: "1" }
-              ]
-          }
-      ]
+        testCases: [
+          { input: "abcabcbb", output: "3" },
+          { input: "bbbbb", output: "1" },
+          { input: "pwwkew", output: "3" },
+          { input: "", output: "0" },
+          { input: " ", output: "1" },
+          { input: "au", output: "2" },
+          { input: "dvdf", output: "3" },
+          { input: "abba", output: "2" },
+          { input: "abcdefghijklmnopqrstuvwxyz", output: "26" },
+          { input: "aab", output: "2" }
+        ]
+      }
+    ]
   },
   {
-      category: 'Linked List',
-      problems: [
-          { 
-              id: 'reverse-linked-list', 
-              name: 'Холбоос жагсаалтыг урвуулах', 
-              videoId: 'MCAPgScWs2A', 
-              description: `
-                <p class="mb-4">Ганц холбоост жагсаалтын (singly linked list) <code>head</code> өгөгдсөн бол жагсаалтыг урвуулж, урвуулсан жагсаалтыг буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: head = [1,2,3,4,5]
+    category: 'Linked List',
+    problems: [
+      { 
+        id: 'reverse-linked-list', 
+        name: 'Холбоос жагсаалтыг урвуулах', 
+        videoId: 'MCAPgScWs2A', 
+        description: `
+          <p class="mb-4">Ганц холбоост жагсаалтын (singly linked list) <code>head</code> өгөгдсөн бол жагсаалтыг урвуулж, урвуулсан жагсаалтыг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: head = [1,2,3,4,5]
 Output: [5,4,3,2,1]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
-# Definition for singly-linked list.
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
-# Helper: List -> ListNode
 def listToListNode(nums):
     dummy = ListNode(0)
     ptr = dummy
@@ -968,7 +1210,6 @@ def listToListNode(nums):
         ptr = ptr.next
     return dummy.next
 
-# Helper: ListNode -> List
 def listNodeToList(node):
     res = []
     while node:
@@ -985,25 +1226,34 @@ def reverseList(head):
 
 resHead = reverseList(head)
 print(json.dumps(listNodeToList(resHead)).replace(" ", ""))`,
-              testCases: [
-                  { input: "[1,2,3,4,5]", output: "[5,4,3,2,1]" }
-              ]
-          },
-          { 
-              id: 'merge-two-sorted-lists', 
-              name: 'Хоёр эрэмбэлэгдсэн жагсаалтыг нэгтгэх', 
-              videoId: 'tgFXfiJm8DQ', 
-              description: `
-                <p class="mb-4">Хоёр эрэмбэлэгдсэн холбоос жагсаалтын <code>list1</code> ба <code>list2</code> толгойнууд өгөгдсөн.</p>
-                <p class="mb-4">Хоёр жагсаалтыг нэг <strong>эрэмбэлэгдсэн</strong> жагсаалт болгон нэгтгэ. Жагсаалт нь эхний хоёр жагсаалтын зангилаануудыг залгах замаар хийгдэх ёстой.</p>
-                <p class="mb-4">Нэгтгэсэн холбоос жагсаалтын толгойг буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: list1 = [1,2,4], list2 = [1,3,4]
+        testCases: [
+          { input: "[1,2,3,4,5]", output: "[5,4,3,2,1]" },
+          { input: "[1,2]", output: "[2,1]" },
+          { input: "[]", output: "[]" },
+          { input: "[1]", output: "[1]" },
+          { input: "[1,1,1]", output: "[1,1,1]" },
+          { input: "[10,20,30]", output: "[30,20,10]" },
+          { input: "[-1,-2,-3]", output: "[-3,-2,-1]" },
+          { input: "[1,2,3,4]", output: "[4,3,2,1]" },
+          { input: "[5,4,3,2,1]", output: "[1,2,3,4,5]" },
+          { input: "[100]", output: "[100]" }
+        ]
+      },
+      { 
+        id: 'merge-two-sorted-lists', 
+        name: 'Хоёр эрэмбэлэгдсэн жагсаалтыг нэгтгэх', 
+        videoId: 'tgFXfiJm8DQ', 
+        description: `
+          <p class="mb-4">Хоёр эрэмбэлэгдсэн холбоос жагсаалтын <code>list1</code> ба <code>list2</code> толгойнууд өгөгдсөн.</p>
+          <p class="mb-4">Хоёр жагсаалтыг нэг <strong>эрэмбэлэгдсэн</strong> жагсаалт болгон нэгтгэ. Жагсаалт нь эхний хоёр жагсаалтын зангилаануудыг залгах замаар хийгдэх ёстой.</p>
+          <p class="mb-4">Нэгтгэсэн холбоос жагсаалтын толгойг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: list1 = [1,2,4], list2 = [1,3,4]
 Output: [1,1,2,3,4,4]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 class ListNode:
@@ -1036,27 +1286,36 @@ def mergeTwoLists(list1, list2):
 
 res = mergeTwoLists(l1, l2)
 print(json.dumps(listNodeToList(res)).replace(" ", ""))`,
-              testCases: [
-                  { input: "[1,2,4]\n[1,3,4]", output: "[1,1,2,3,4,4]" }
-              ]
-          },
-          { 
-              id: 'reorder-list', 
-              name: 'Жагсаалтыг дахин эрэмбэлэх', 
-              videoId: 'rcSRaj7pTEM', 
-              description: `
-                <p class="mb-4">Танд ганц холбоост жагсаалтын толгой өгөгдсөн. Жагсаалт нь дараах байдлаар илэрхийлэгдэж болно:</p>
-                <p class="mb-2"><code>L0 → L1 → … → Ln - 1 → Ln</code></p>
-                <p class="mb-4">Жагсаалтыг дараах хэлбэртэй болгож өөрчил:</p>
-                <p class="mb-2"><code>L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …</code></p>
-                <p class="mb-4">Та жагсаалтын зангилаан дахь утгуудыг өөрчилж болохгүй. Зөвхөн зангилаануудыг өөрсдийг нь өөрчилж болно.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: head = [1,2,3,4]
+        testCases: [
+          { input: "[1,2,4]\n[1,3,4]", output: "[1,1,2,3,4,4]" },
+          { input: "[]\n[]", output: "[]" },
+          { input: "[]\n[0]", output: "[0]" },
+          { input: "[1]\n[2]", output: "[1,2]" },
+          { input: "[2]\n[1]", output: "[1,2]" },
+          { input: "[5,10,15]\n[2,3,20]", output: "[2,3,5,10,15,20]" },
+          { input: "[-5,-3,0]\n[-4,-2,1]", output: "[-5,-4,-3,-2,0,1]" },
+          { input: "[1,2,3]\n[]", output: "[1,2,3]" },
+          { input: "[1,1,1]\n[1,1,1]", output: "[1,1,1,1,1,1]" },
+          { input: "[100]\n[50,150]", output: "[50,100,150]" }
+        ]
+      },
+      { 
+        id: 'reorder-list', 
+        name: 'Жагсаалтыг дахин эрэмбэлэх', 
+        videoId: 'rcSRaj7pTEM', 
+        description: `
+          <p class="mb-4">Танд ганц холбоост жагсаалтын толгой өгөгдсөн. Жагсаалт нь дараах байдлаар илэрхийлэгдэж болно:</p>
+          <p class="mb-2"><code>L0 → L1 → … → Ln - 1 → Ln</code></p>
+          <p class="mb-4">Жагсаалтыг дараах хэлбэртэй болгож өөрчил:</p>
+          <p class="mb-2"><code>L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …</code></p>
+          <p class="mb-4">Та жагсаалтын зангилаан дахь утгуудыг өөрчилж болохгүй. Зөвхөн зангилаануудыг өөрсдийг нь өөрчилж болно.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: head = [1,2,3,4]
 Output: [1,4,2,3]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 class ListNode:
@@ -1087,24 +1346,32 @@ def reorderList(head):
 
 reorderList(head)
 print(json.dumps(listNodeToList(head)).replace(" ", ""))`,
-              testCases: [
-                  { input: "[1,2,3,4]", output: "[1,4,2,3]" },
-                  { input: "[1,2,3,4,5]", output: "[1,5,2,4,3]" }
-              ]
-          },
-          { 
-              id: 'remove-nth-node-from-end-of-list', 
-              name: 'Жагсаалтын төгсгөлөөс N-р зангилааг устгах', 
-              videoId: 'WTe7RJ3_TVM', 
-              description: `
-                <p class="mb-4">Холбоос жагсаалтын <code>head</code> өгөгдсөн бол жагсаалтын төгсгөлөөс <code>n</code>-р зангилааг устгаж, <code>head</code>-ийг буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: head = [1,2,3,4,5], n = 2
+        testCases: [
+          { input: "[1,2,3,4]", output: "[1,4,2,3]" },
+          { input: "[1,2,3,4,5]", output: "[1,5,2,4,3]" },
+          { input: "[1]", output: "[1]" },
+          { input: "[1,2]", output: "[1,2]" },
+          { input: "[1,2,3]", output: "[1,3,2]" },
+          { input: "[1,2,3,4,5,6]", output: "[1,6,2,5,3,4]" },
+          { input: "[1,2,3,4,5,6,7]", output: "[1,7,2,6,3,5,4]" },
+          { input: "[10,20,30,40]", output: "[10,40,20,30]" },
+          { input: "[5,15,25,35,45]", output: "[5,45,15,35,25]" },
+          { input: "[2,4,6,8,10,12]", output: "[2,12,4,10,6,8]" }
+        ]
+      },
+      { 
+        id: 'remove-nth-node-from-end-of-list', 
+        name: 'Жагсаалтын төгсгөлөөс N-р зангилааг устгах', 
+        videoId: 'WTe7RJ3_TVM', 
+        description: `
+          <p class="mb-4">Холбоос жагсаалтын <code>head</code> өгөгдсөн бол жагсаалтын төгсгөлөөс <code>n</code>-р зангилааг устгаж, <code>head</code>-ийг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: head = [1,2,3,4,5], n = 2
 Output: [1,2,3,5]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 class ListNode:
@@ -1137,28 +1404,37 @@ def removeNthFromEnd(head, n):
 
 res = removeNthFromEnd(head, n)
 print(json.dumps(listNodeToList(res)).replace(" ", ""))`,
-              testCases: [
-                  { input: "[1,2,3,4,5]\n2", output: "[1,2,3,5]" }
-              ]
-          }
-      ]
+        testCases: [
+          { input: "[1,2,3,4,5]\n2", output: "[1,2,3,5]" },
+          { input: "[1]\n1", output: "[]" },
+          { input: "[1,2]\n1", output: "[1]" },
+          { input: "[1,2]\n2", output: "[2]" },
+          { input: "[1,2,3]\n3", output: "[2,3]" },
+          { input: "[1,2,3]\n1", output: "[1,2]" },
+          { input: "[1,2,3,4]\n2", output: "[1,2,4]" },
+          { input: "[10,20,30,40,50]\n5", output: "[20,30,40,50]" },
+          { input: "[1,2,3,4,5,6]\n3", output: "[1,2,3,5,6]" },
+          { input: "[100,200]\n2", output: "[200]" }
+        ]
+      }
+    ]
   },
   {
-      category: 'Tree',
-      problems: [
-          { 
-              id: 'invert-binary-tree', 
-              name: 'Бинар модыг урвуулах', 
-              videoId: 'cGGZcLtrX-A', 
-              description: `
-                <p class="mb-4">Бинар модны <code>root</code> өгөгдсөн бол модыг урвуулж (толин тусгал мэт), үндсийг нь буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: root = [4,2,7,1,3,6,9]
+    category: 'Tree',
+    problems: [
+      { 
+        id: 'invert-binary-tree', 
+        name: 'Бинар модыг урвуулах', 
+        videoId: 'cGGZcLtrX-A', 
+        description: `
+          <p class="mb-4">Бинар модны <code>root</code> өгөгдсөн бол модыг урвуулж (толин тусгал мэт), үндсийг нь буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: root = [4,2,7,1,3,6,9]
 Output: [4,7,2,9,6,3,1]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 from collections import deque
 
@@ -1168,7 +1444,6 @@ class TreeNode:
         self.left = left
         self.right = right
 
-# Helper to build tree from level order array [4,2,7,1,3,6,9]
 def buildTree(nodes):
     if not nodes: return None
     root = TreeNode(nodes[0])
@@ -1186,7 +1461,6 @@ def buildTree(nodes):
         i += 1
     return root
 
-# Helper to convert tree to array (level order)
 def treeToArray(root):
     if not root: return []
     res = []
@@ -1199,7 +1473,6 @@ def treeToArray(root):
             queue.append(node.right)
         else:
             res.append(None)
-    # Remove trailing Nones
     while res and res[-1] is None:
         res.pop()
     return res
@@ -1213,24 +1486,33 @@ def invertTree(root):
 
 res = invertTree(root)
 print(json.dumps(treeToArray(res)).replace(" ", ""))`,
-              testCases: [
-                  { input: "[4,2,7,1,3,6,9]", output: "[4,7,2,9,6,3,1]" }
-              ]
-          },
-          { 
-              id: 'maximum-depth-of-binary-tree', 
-              name: 'Бинар модны хамгийн их гүн', 
-              videoId: 'LVmVM5lRfDg', 
-              description: `
-                <p class="mb-4">Бинар модны <code>root</code> өгөгдсөн бол түүний хамгийн их гүнийг ол.</p>
-                <p class="mb-4">Бинар модны <strong>хамгийн их гүн</strong> нь үндэс зангилаанаас хамгийн алслагдсан навч зангилаа хүртэлх хамгийн урт замын дагуух зангилаануудын тоо юм.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: root = [3,9,20,null,null,15,7]
+        testCases: [
+          { input: "[4,2,7,1,3,6,9]", output: "[4,7,2,9,6,3,1]" },
+          { input: "[2,1,3]", output: "[2,3,1]" },
+          { input: "[]", output: "[]" },
+          { input: "[1]", output: "[1]" },
+          { input: "[1,2]", output: "[1,null,2]" },
+          { input: "[1,null,2]", output: "[1,2]" },
+          { input: "[1,2,null,3]", output: "[1,null,2,null,3]" },
+          { input: "[5,3,8,1,4,7,9]", output: "[5,8,3,9,7,4,1]" },
+          { input: "[10,5,15]", output: "[10,15,5]" },
+          { input: "[1,2,3,4,null,null,5]", output: "[1,3,2,5,null,null,4]" }
+        ]
+      },
+      { 
+        id: 'maximum-depth-of-binary-tree', 
+        name: 'Бинар модны хамгийн их гүн', 
+        videoId: 'LVmVM5lRfDg', 
+        description: `
+          <p class="mb-4">Бинар модны <code>root</code> өгөгдсөн бол түүний хамгийн их гүнийг ол.</p>
+          <p class="mb-4">Бинар модны <strong>хамгийн их гүн</strong> нь үндэс зангилаанаас хамгийн алслагдсан навч зангилаа хүртэлх хамгийн урт замын дагуух зангилаануудын тоо юм.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: root = [3,9,20,null,null,15,7]
 Output: 3</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 from collections import deque
 
@@ -1265,24 +1547,33 @@ def maxDepth(root):
     pass
 
 print(maxDepth(root))`,
-              testCases: [
-                  { input: "[3,9,20,null,null,15,7]", output: "3" }
-              ]
-          },
-          { 
-              id: 'same-tree', 
-              name: 'Ижил мод', 
-              videoId: 'nMK4qYwD9Lw', 
-              description: `
-                <p class="mb-4">Хоёр бинар модны <code>p</code> ба <code>q</code> үндсүүд өгөгдсөн бол тэдгээр нь ижил эсэхийг шалгах функц бич.</p>
-                <p class="mb-4">Хоёр бинар мод нь бүтцийн хувьд ижил, зангилаанууд нь ижил утгатай байвал ижилд тооцогдоно.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: p = [1,2,3], q = [1,2,3]
+        testCases: [
+          { input: "[3,9,20,null,null,15,7]", output: "3" },
+          { input: "[1,null,2]", output: "2" },
+          { input: "[]", output: "0" },
+          { input: "[0]", output: "1" },
+          { input: "[1,2,3,4,5]", output: "3" },
+          { input: "[1,2,null,3,null,4,null,5]", output: "5" },
+          { input: "[1,2,3]", output: "2" },
+          { input: "[1,null,2,null,3,null,4]", output: "4" },
+          { input: "[1,2,3,4,null,null,null,5]", output: "4" },
+          { input: "[10,5,15,null,null,12,20,null,null,null,25]", output: "4" }
+        ]
+      },
+      { 
+        id: 'same-tree', 
+        name: 'Ижил мод', 
+        videoId: 'nMK4qYwD9Lw', 
+        description: `
+          <p class="mb-4">Хоёр бинар модны <code>p</code> ба <code>q</code> үндсүүд өгөгдсөн бол тэдгээр нь ижил эсэхийг шалгах функц бич.</p>
+          <p class="mb-4">Хоёр бинар мод нь бүтцийн хувьд ижил, зангилаануудыг нь ижил утгатай байвал ижилд тооцогдоно.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: p = [1,2,3], q = [1,2,3]
 Output: true</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 from collections import deque
 
@@ -1318,30 +1609,38 @@ def isSameTree(p, q):
     pass
 
 print("true" if isSameTree(p, q) else "false")`,
-              testCases: [
-                  { input: "[1,2,3]\n[1,2,3]", output: "true" },
-                  { input: "[1,2]\n[1,null,2]", output: "false" }
-              ]
-          }
-      ]
+        testCases: [
+          { input: "[1,2,3]\n[1,2,3]", output: "true" },
+          { input: "[1,2]\n[1,null,2]", output: "false" },
+          { input: "[1,2,1]\n[1,1,2]", output: "false" },
+          { input: "[]\n[]", output: "true" },
+          { input: "[1]\n[]", output: "false" },
+          { input: "[1]\n[1]", output: "true" },
+          { input: "[1,2,3,4,5]\n[1,2,3,4,5]", output: "true" },
+          { input: "[1,2,3,4,5]\n[1,2,3,4,null]", output: "false" },
+          { input: "[10,5,15]\n[10,5,15]", output: "true" },
+          { input: "[10,5,15]\n[10,15,5]", output: "false" }
+        ]
+      }
+    ]
   },
   {
-      category: 'Backtracking',
-      problems: [
-          { 
-              id: 'subsets', 
-              name: 'Дэд олонлогууд', 
-              videoId: '1qSf491gjFM', 
-              description: `
-                <p class="mb-4"><strong>Давтагдахгүй</strong> элементүүдтэй бүхэл тоон <code>nums</code> массив өгөгдсөн бол бүх боломжит дэд олонлогуудыг (power set) буцаа.</p>
-                <p class="mb-4">Шийдийн олонлогт давхардсан дэд олонлог байж болохгүй. Шийдийг <strong>дурын дарааллаар</strong> буцааж болно.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: nums = [1,2,3]
+    category: 'Backtracking',
+    problems: [
+      { 
+        id: 'subsets', 
+        name: 'Дэд олонлогууд', 
+        videoId: '1qSf491gjFM', 
+        description: `
+          <p class="mb-4"><strong>Давтагдахгүй</strong> элементүүдтэй бүхэл тоон <code>nums</code> массив өгөгдсөн бол бүх боломжит дэд олонлогуудыг (power set) буцаа.</p>
+          <p class="mb-4">Шийдийн олонлогт давхардсан дэд олонлог байж болохгүй. Шийдийг <strong>дурын дарааллаар</strong> буцааж болно.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: nums = [1,2,3]
 Output: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 
 nums = json.loads(sys.stdin.read().strip())
@@ -1350,7 +1649,6 @@ def subsets(nums):
     # Write your code here
     pass
 
-# Helper to sort and print result
 res = subsets(nums)
 if res:
     res = [sorted(x) for x in res]
@@ -1358,40 +1656,49 @@ if res:
     print(json.dumps(res).replace(" ", ""))
 else:
     print("[]")`,
-              testCases: [
-                  { input: "[1,2,3]", output: "[[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]" }
-              ]
-          }
-      ]
+        testCases: [
+          { input: "[1,2,3]", output: "[[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]" },
+          { input: "[0]", output: "[[],[0]]" },
+          { input: "[]", output: "[[]]" },
+          { input: "[1,2]", output: "[[],[1],[2],[1,2]]" },
+          { input: "[9]", output: "[[],[9]]" },
+          { input: "[4,1]", output: "[[],[1],[4],[1,4]]" },
+          { input: "[3,2,1]", output: "[[],[1],[2],[3],[1,2],[1,3],[2,3],[1,2,3]]" },
+          { input: "[1,2,3,4]", output: "[[],[1],[2],[3],[4],[1,2],[1,3],[1,4],[2,3],[2,4],[3,4],[1,2,3],[1,2,4],[1,3,4],[2,3,4],[1,2,3,4]]" },
+          { input: "[-1,1]", output: "[[],[-1],[1],[-1,1]]" },
+          { input: "[5,10,15]", output: "[[],[5],[10],[15],[5,10],[5,15],[10,15],[5,10,15]]" }
+        ]
+      }
+    ]
   },
   {
-      category: 'Heap / Priority Queue',
-      problems: [
-          { 
-              id: 'last-stone-weight', 
-              name: 'Сүүлийн чулууны жин', 
-              videoId: 'Ol-cUXKP3Ic', 
-              description: `
-                <p class="mb-4">Танд бүхэл тоон <code>stones</code> массив өгөгдсөн ба <code>stones[i]</code> нь <code>i</code>-р чулууны жин юм.</p>
-                <p class="mb-4">Бид чулуунуудтай тоглоом тоглож байна. Ээлж бүрт бид <strong>хамгийн хүнд хоёр чулууг</strong> сонгож, хооронд нь мөргөлдүүлнэ. Хамгийн хүнд хоёр чулуу <code>x</code> ба <code>y</code> жинтэй ба <code>x <= y</code> гэж үзье. Мөргөлдөөний үр дүнд:</p>
-                <ul class="list-disc ml-5 mb-4">
-                  <li>Хэрэв <code>x == y</code> бол хоёр чулуу хоёулаа устана.</li>
-                  <li>Хэрэв <code>x != y</code> бол <code>x</code> жинтэй чулуу устаж, <code>y</code> жинтэй чулуу <code>y - x</code> жинтэй болно.</li>
-                </ul>
-                <p class="mb-4">Тоглоомын төгсгөлд <strong>хамгийн ихдээ нэг</strong> чулуу үлдэнэ.</p>
-                <p class="mb-4">Үлдсэн чулууны жинг буцаа. Хэрэв чулуу үлдэхгүй бол <code>0</code>-ийг буцаа.</p>
-                <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
-                  <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
-                  <pre class="text-sm">Input: stones = [2,7,4,1,8,1]
+    category: 'Heap / Priority Queue',
+    problems: [
+      { 
+        id: 'last-stone-weight', 
+        name: 'Сүүлийн чулууны жин', 
+        videoId: 'Ol-cUXKP3Ic', 
+        description: `
+          <p class="mb-4">Танд бүхэл тоон <code>stones</code> массив өгөгдсөн ба <code>stones[i]</code> нь <code>i</code>-р чулууны жин юм.</p>
+          <p class="mb-4">Бид чулуунуудтай тоглоом тоглож байна. Ээлж бүрт бид <strong>хамгийн хүнд хоёр чулууг</strong> сонгож, хооронд нь мөргөлдүүлнэ. Хамгийн хүнд хоёр чулуу <code>x</code> ба <code>y</code> жинтэй ба <code>x <= y</code> гэж үзье. Мөргөлдөөний үр дүнд:</p>
+          <ul class="list-disc ml-5 mb-4">
+            <li>Хэрэв <code>x == y</code> бол хоёр чулуу хоёулаа устана.</li>
+            <li>Хэрэв <code>x != y</code> бол <code>x</code> жинтэй чулуу устаж, <code>y</code> жинтэй чулуу <code>y - x</code> жинтэй болно.</li>
+          </ul>
+          <p class="mb-4">Тоглоомын төгсгөлд <strong>хамгийн ихдээ нэг</strong> чулуу үлдэнэ.</p>
+          <p class="mb-4">Үлдсэн чулууны жинг буцаа. Хэрэв чулуу үлдэхгүй бол <code>0</code>-ийг буцаа.</p>
+          <div class="mb-4 bg-slate-800/50 p-4 rounded-lg">
+            <p class="font-bold text-slate-300 mb-2">Жишээ 1:</p>
+            <pre class="text-sm">Input: stones = [2,7,4,1,8,1]
 Output: 1
 Тайлбар: 
 7 ба 8-ийг нэгтгэснээр 1 болно -> [2,4,1,1,1].
 2 ба 4-ийг нэгтгэснээр 2 болно -> [2,1,1,1].
 2 ба 1-ийг нэгтгэснээр 1 болно -> [1,1,1].
 1 ба 1-ийг нэгтгэснээр 0 болно -> [1]. Энэ бол сүүлийн үлдсэн чулуу.</pre>
-                </div>`,
-              defaultLanguage: "python",
-              starterCode: `import sys
+          </div>`,
+        defaultLanguage: "python",
+        starterCode: `import sys
 import json
 import heapq
 
@@ -1402,11 +1709,20 @@ def lastStoneWeight(stones):
     pass
 
 print(lastStoneWeight(stones))`,
-              testCases: [
-                  { input: "[2,7,4,1,8,1]", output: "1" }
-              ]
-          }
-      ]
+        testCases: [
+          { input: "[2,7,4,1,8,1]", output: "1" },
+          { input: "[1]", output: "1" },
+          { input: "[2,2]", output: "0" },
+          { input: "[3,7,2]", output: "2" },
+          { input: "[1,3]", output: "2" },
+          { input: "[10,4,2,10]", output: "2" },
+          { input: "[9,3,2,10]", output: "0" },
+          { input: "[1,1,1,1]", output: "0" },
+          { input: "[1,1,1]", output: "1" },
+          { input: "[20,15,10,5]", output: "0" }
+        ]
+      }
+    ]
   }
 ];
 
