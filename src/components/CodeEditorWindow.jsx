@@ -1,37 +1,55 @@
-import React, { useState, useEffect } from "react";
-import Editor from "@monaco-editor/react";
+// src/components/CodeEditorWindow.jsx
+import React from 'react';
+import Editor from '@monaco-editor/react';
 
-const CodeEditorWindow = ({ onChange, language, code, theme }) => {
-  const [value, setValue] = useState(code || "");
-
-  // 1. LISTEN FOR CHANGES: Update local state when the parent 'code' prop changes
-  useEffect(() => {
-    setValue(code || "");
-  }, [code]);
-
+export default function CodeEditorWindow({
+  onChange,
+  language = 'python',
+  code = '',
+  theme = 'vs-dark'
+}) {
   const handleEditorChange = (value) => {
-    setValue(value);
-    onChange("code", value);
+    if (onChange) {
+      onChange('code', value || '');
+    }
   };
 
+  // Normalize language identifier for Monaco Editor
+  const monacoLanguage =
+    language.toLowerCase() === 'cpp' || language.toLowerCase() === 'c++'
+      ? 'cpp'
+      : language.toLowerCase() === 'javascript' || language.toLowerCase() === 'js'
+      ? 'javascript'
+      : 'python';
+
   return (
-    <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl">
+    <div className="w-full h-full overflow-hidden">
       <Editor
-        height="85vh"
-        width={`100%`}
-        language={language || "python"}
-        value={value}
+        height="100%"
+        width="100%"
+        language={monacoLanguage}
+        value={code}
         theme={theme}
-        // 2. Removed the hardcoded defaultValue="// some comment"
         onChange={handleEditorChange}
         options={{
-          minimap: { enabled: false },
           fontSize: 14,
+          fontFamily: "'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace",
+          fontLigatures: true,
+          minimap: { enabled: false },
           scrollBeyondLastLine: false,
           automaticLayout: true,
+          tabSize: 4,
+          wordWrap: 'on',
+          lineNumbers: 'on',
+          renderLineHighlight: 'all',
+          cursorBlinking: 'smooth',
+          smoothScrolling: true,
+          bracketPairColorization: { enabled: true },
+          formatOnPaste: true,
+          formatOnType: true,
+          suggestOnTriggerCharacters: true
         }}
       />
     </div>
   );
-};
-export default CodeEditorWindow;
+}

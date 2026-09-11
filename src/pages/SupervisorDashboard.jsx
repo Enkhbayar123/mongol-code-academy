@@ -1,104 +1,496 @@
-import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
-import { useLanguage } from '../context/LanguageContext';
+// src/pages/SupervisorDashboard.jsx
+import React, { useState, useEffect } from 'react';
+import { db, auth } from '../firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import AddHomeworkModal from '../components/AddHomeworkModal';
+import { basicPracticeData } from '../data/basic-practice-data';
 
-const SupervisorDashboard = () => {
+export default function SupervisorDashboard() {
+  const [currentUser, setCurrentUser] = useState(null);
   const [students, setStudents] = useState([]);
+  const [homeworks, setHomeworks] = useState([]);
+  const [activeClass, setActiveClass] = useState(null); // null = Classes Overview, string = Selected Class Drilldown
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isHwModalOpen, setIsHwModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const { t } = useLanguage();
 
+  // Auth monitoring
   useEffect(() => {
-    const fetchTegshUhaanStudents = async () => {
-      try {
-        // Query Firestore users collection for Tegsh Uhaan students
-        const q = query(collection(db, "users"), where("isTegshUhaan", "==", true));
-        const querySnapshot = await getDocs(q);
-        
-        const studentList = [];
-        querySnapshot.forEach((doc) => {
-          studentList.push({ id: doc.id, ...doc.data() });
-        });
-
-        setStudents(studentList);
-      } catch (err) {
-        console.error("Error fetching students: ", err);
-        setError("Failed to load student progress data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTegshUhaanStudents();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
   }, []);
 
+  // Real-time Firestore sync
+  useEffect(() => {
+    const usersQuery = collection(db, 'users');
+    const unsubscribeUsers = onSnapshot(
+      usersQuery,
+      (snapshot) => {
+        const userList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Filter ONLY @tegshuhaan.mn accounts or accounts with isTegshUhaan flag
+        const tegshUhaanStudents = userList.filter(
+          (u) =>
+            (u.email && u.email.toLowerCase().endsWith('@tegshuhaan.mn')) ||
+            u.isTegshUhaan === true
+        );
+
+        // Sort alphabetically by name
+        tegshUhaanStudents.sort((a, b) => {
+          const nameA = a.fullName || a.name || '';
+          const nameB = b.fullName || b.name || '';
+          return nameA.localeCompare(nameB, 'mn');
+        });
+
+        setStudents(tegshUhaanStudents);
+        setLoading(false);
+      },
+      (err) => {
+        console.error('Failed to fetch users:', err);
+        setLoading(false);
+      }
+    );
+
+    const hwQuery = query(collection(db, 'homeworks'), orderBy('createdAt', 'desc'));
+    const unsubscribeHw = onSnapshot(
+      hwQuery,
+      (snapshot) => {
+        const hwList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setHomeworks(hwList);
+      },
+      (err) => {
+        console.error('Failed to fetch homeworks:', err);
+      }
+    );
+
+    return () => {
+      unsubscribeUsers();
+      unsubscribeHw();
+    };
+  }, []);
+
+  // Compute assigned problem IDs for a class
+  const getAssignedHomeworkProblems = (studentClass) => {
+    const applicableHw = homeworks.filter(
+      (hw) => !hw.assignedClass || hw.assignedClass === 'all' || hw.assignedClass === studentClass
+    );
+    const problemIds = new Set();
+    applicableHw.forEach((hw) => {
+      (hw.problemIds || []).forEach((pid) => problemIds.add(pid));
+    });
+    return Array.from(problemIds);
+  };
+
+  // Compute individual student progress
+  const calculateStudentProgress = (student) => {
+    const assignedIds = getAssignedHomeworkProblems(student.class);
+    if (assignedIds.length === 0) return { percent: 100, completed: 0, total: 0 };
+
+    const solvedList = student.solvedProblems || [];
+    const completedCount = assignedIds.filter((pid) => solvedList.includes(pid)).length;
+    const percent = Math.round((completedCount / assignedIds.length) * 100);
+
+    return {
+      percent,
+      completed: completedCount,
+      total: assignedIds.length
+    };
+  };
+
+  // Group students by class
+  const classGroups = students.reduce((acc, student) => {
+    const className = student.class || 'Анги тодорхойгүй';
+    if (!acc[className]) {
+      acc[className] = [];
+    }
+    acc[className].push(student);
+    return acc;
+  }, {});
+
+  const sortedClassNames = Object.keys(classGroups).sort((a, b) => a.localeCompare(b, 'mn'));
+
+  // Calculate average completion rate for a class
+  const getClassAverage = (studentList, className) => {
+    if (!studentList || studentList.length === 0) return 0;
+    const sum = studentList.reduce((acc, s) => acc + calculateStudentProgress(s).percent, 0);
+    return Math.round(sum / studentList.length);
+  };
+
   return (
-    <div className="min-h-screen py-12 px-6 max-w-7xl mx-auto relative z-10">
-      {/* Header */}
-      <div className="mb-10 text-center sm:text-left">
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight gradient-text">
-          Supervisor Dashboard
-        </h1>
-        <p className="text-slate-400 mt-2 text-sm sm:text-base">
-          Tracking progress and performance for Tegsh Uhaan School students.
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#070b14] text-slate-100 font-sans p-6 sm:p-10">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Navigation & Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="flex items-center space-x-2.5 mb-1">
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                Багшийн удирдлагын хэсэг
+              </span>
+              {currentUser && (
+                <span className="text-xs text-slate-400">({currentUser.email})</span>
+              )}
+            </div>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center space-x-3">
+              {activeClass ? (
+                <>
+                  <button
+                    onClick={() => setActiveClass(null)}
+                    className="text-slate-400 hover:text-white transition-colors text-2xl"
+                    title="Бүх анги руу буцах"
+                  >
+                    &larr;
+                  </button>
+                  <span>{activeClass} ангийн сурагчид</span>
+                </>
+              ) : (
+                <span>TegshUhaan Сургалтын ангиуд</span>
+              )}
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              {activeClass
+                ? `${activeClass} ангийн сурагчдын даалгавар гүйцэтгэл ба дэлгэрэнгүй тайлан`
+                : 'Анги дээр дарж тухайн ангийн сурагчдын явцыг харна уу'}
+            </p>
+          </div>
 
-      {/* Loading & Error States */}
-      {loading && (
-        <div className="flex justify-center items-center py-20">
-          <span className="w-8 h-8 rounded-full border-4 border-sky-500/30 border-t-sky-500 animate-spin"></span>
+          <div className="flex items-center space-x-3">
+            {activeClass && (
+              <button
+                onClick={() => setActiveClass(null)}
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition-colors"
+              >
+                &larr; Бүх анги
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsHwModalOpen(true)}
+              className="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center space-x-1.5"
+            >
+              <span>+</span>
+              <span>Гэрийн даалгавар нэмэх</span>
+            </button>
+          </div>
         </div>
-      )}
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-center">
-          {error}
+        {/* Global Stats Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Нийт ангиуд</span>
+            <p className="text-2xl font-black text-white mt-1">{sortedClassNames.length}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Бүртгэлтэй сурагчид</span>
+            <p className="text-2xl font-black text-emerald-400 mt-1">{students.length}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Нийт даалгавар</span>
+            <p className="text-2xl font-black text-sky-400 mt-1">{homeworks.length}</p>
+          </div>
         </div>
-      )}
 
-      {/* Student List Grid / Table */}
-      {!loading && !error && students.length === 0 && (
-        <div className="glass-card rounded-3xl p-12 text-center border border-white/5">
-          <p className="text-slate-400 font-semibold">No students found from Tegsh Uhaan School yet.</p>
-        </div>
-      )}
+        {loading ? (
+          <div className="py-24 flex justify-center items-center space-x-3 text-slate-400 text-sm">
+            <div className="w-5 h-5 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+            <span>Мэдээллийг ачаалж байна...</span>
+          </div>
+        ) : !activeClass ? (
+          /* =========================================================
+             VIEW 1: CLASS LIST (GRID OF CLASSES)
+             ========================================================= */
+          <div className="space-y-4">
+            <h2 className="text-base font-bold text-white">Анги сонгох</h2>
 
-      {!loading && students.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {students.map((student) => (
-            <div key={student.id} className="glass-card rounded-3xl p-6 border border-white/5 relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/5 to-purple-500/5 pointer-events-none"></div>
-              
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-bold text-slate-100">{student.fullName || 'Unnamed Student'}</h3>
-                  <span className="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs px-2.5 py-1 rounded-xl font-semibold">
-                    {student.programmingExperience || 'Beginner'}
-                  </span>
+            {sortedClassNames.length === 0 ? (
+              <div className="p-12 rounded-2xl bg-[#0b1120] border border-slate-800/80 text-center text-slate-400 text-sm">
+                Бүртгэлтэй анги одоогоор алга байна.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {sortedClassNames.map((className) => {
+                  const classStudents = classGroups[className];
+                  const avgPercent = getClassAverage(classStudents, className);
+                  const assignedHwCount = homeworks.filter(
+                    (hw) => !hw.assignedClass || hw.assignedClass === 'all' || hw.assignedClass === className
+                  ).length;
+
+                  return (
+                    <div
+                      key={className}
+                      onClick={() => setActiveClass(className)}
+                      className="p-6 rounded-2xl bg-[#0b1120] border border-slate-800/80 hover:border-sky-500/60 hover:bg-[#0e1629] cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-6 shadow-sm group"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                            Анги
+                          </span>
+                          <h3 className="text-2xl font-black text-white mt-2 group-hover:text-sky-300 transition-colors">
+                            {className}
+                          </h3>
+                        </div>
+                        <span className="text-xs px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-semibold border border-slate-700">
+                          {classStudents.length} сурагч
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 pt-4 border-t border-slate-800/60">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-slate-400">Дундаж биелэлт:</span>
+                          <span className={avgPercent >= 80 ? 'text-emerald-400' : 'text-sky-400'}>
+                            {avgPercent}%
+                          </span>
+                        </div>
+
+                        <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              avgPercent >= 80 ? 'bg-emerald-500' : 'bg-sky-500'
+                            }`}
+                            style={{ width: `${avgPercent}%` }}
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                          <span>Оноосон даалгавар: {assignedHwCount}</span>
+                          <span className="text-sky-400 font-semibold group-hover:underline">
+                            Нээж үзэх &rarr;
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* =========================================================
+             VIEW 2: STUDENTS INSIDE SELECTED CLASS
+             ========================================================= */
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-white">
+                {activeClass} ангийн сурагчид ({classGroups[activeClass]?.length || 0})
+              </h2>
+              <button
+                onClick={() => setActiveClass(null)}
+                className="text-xs text-sky-400 hover:text-sky-300 font-semibold"
+              >
+                &larr; Бүх ангийн жагсаалт руу буцах
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(classGroups[activeClass] || []).map((student) => {
+                const { percent, completed, total } = calculateStudentProgress(student);
+
+                return (
+                  <div
+                    key={student.id}
+                    onClick={() => setSelectedStudent(student)}
+                    className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80 hover:border-sky-500/60 hover:bg-[#0e1629] cursor-pointer transition-all duration-200 flex flex-col justify-between space-y-4 shadow-sm group"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                          {student.class} анги
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                          @tegshuhaan
+                        </span>
+                      </div>
+
+                      <h3 className="text-base font-bold text-white group-hover:text-sky-300 transition-colors">
+                        {student.fullName || student.name || 'Нэргүй'}
+                      </h3>
+                      <p className="text-xs text-slate-400 truncate mt-0.5">{student.email}</p>
+                    </div>
+
+                    <div className="space-y-2 pt-2 border-t border-slate-800/60">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-slate-400">Даалгаврын гүйцэтгэл:</span>
+                        <span
+                          className={
+                            percent === 100
+                              ? 'text-emerald-400 font-bold'
+                              : percent >= 50
+                              ? 'text-sky-400'
+                              : 'text-amber-400'
+                          }
+                        >
+                          {percent}% ({completed}/{total})
+                        </span>
+                      </div>
+
+                      <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            percent === 100
+                              ? 'bg-emerald-500'
+                              : percent >= 50
+                              ? 'bg-sky-500'
+                              : 'bg-amber-500'
+                          }`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+
+                      <div className="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                        <span>Нийт бодсон: {(student.solvedProblems || []).length}</span>
+                        <span className="text-sky-400 font-semibold group-hover:underline">Дэлгэрэнгүй &rarr;</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Selected Student Details Modal */}
+        {selectedStudent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="bg-[#0b1120] border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden font-sans">
+              <div className="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-[#080e1a]">
+                <div>
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h2 className="text-xl font-extrabold text-white">
+                      {selectedStudent.fullName || selectedStudent.name || 'Нэргүй'}
+                    </h2>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30">
+                      {selectedStudent.class} анги
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400">{selectedStudent.email}</p>
                 </div>
-                
-                <div className="space-y-2 text-xs sm:text-sm text-slate-400 mb-6">
-                  <p><strong className="text-slate-300">Email:</strong> {student.email}</p>
-                  <p><strong className="text-slate-300">Age:</strong> {student.age || 'N/A'}</p>
-                  <p><strong className="text-slate-300">Country:</strong> {student.country || 'N/A'}</p>
-                  {student.reasonForJoining && (
-                    <p className="pt-2 border-t border-white/5"><strong className="text-slate-300">Goal:</strong> {student.reasonForJoining}</p>
-                  )}
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="text-slate-400 hover:text-white text-lg font-bold px-2 py-1"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {(() => {
+                  const { percent, completed, total } = calculateStudentProgress(selectedStudent);
+                  return (
+                    <div className="p-4 rounded-xl bg-[#070d19] border border-slate-800 flex items-center justify-between">
+                      <div>
+                        <span className="text-xs text-slate-400 block font-medium">Гэрийн даалгаврын биелэлт</span>
+                        <span className="text-2xl font-black text-white">{percent}%</span>
+                      </div>
+                      <div className="text-right text-xs text-slate-400 space-y-1">
+                        <div>
+                          Даалгавар: <span className="text-sky-400 font-bold">{completed}</span> / {total}
+                        </div>
+                        <div>
+                          Нийт бодсон бодлого: <span className="text-emerald-400 font-bold">{(selectedStudent.solvedProblems || []).length}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-white">Оноосон даалгаврууд ({selectedStudent.class} анги)</h3>
+                  {(() => {
+                    const assignedIds = getAssignedHomeworkProblems(selectedStudent.class);
+                    if (assignedIds.length === 0) {
+                      return <p className="text-xs text-slate-500">Одоогоор энэ ангид даалгавар оноогоогүй байна.</p>;
+                    }
+
+                    return (
+                      <div className="space-y-2">
+                        {assignedIds.map((pid) => {
+                          const isDone = (selectedStudent.solvedProblems || []).includes(pid);
+                          const problemMeta = basicPracticeData.find((p) => p.id === pid);
+
+                          return (
+                            <div
+                              key={pid}
+                              className={`p-3 rounded-xl border flex items-center justify-between text-xs ${
+                                isDone
+                                  ? 'bg-emerald-950/20 border-emerald-900/40 text-emerald-200'
+                                  : 'bg-slate-900/40 border-slate-800 text-slate-400'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <span
+                                  className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] ${
+                                    isDone ? 'bg-emerald-500 text-black' : 'bg-slate-800 text-slate-500'
+                                  }`}
+                                >
+                                  {isDone ? '✓' : '✗'}
+                                </span>
+                                <span className="font-mono font-bold text-sky-400">{pid.toUpperCase()}</span>
+                                <span className="text-white font-medium">
+                                  {problemMeta ? problemMeta.name : 'Суурь бодлого'}
+                                </span>
+                              </div>
+                              <span className="font-semibold text-[11px]">
+                                {isDone ? 'Бодогдсон' : 'Хийгээгүй'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-white">
+                    Бүх бодсон бодлогууд ({(selectedStudent.solvedProblems || []).length})
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedStudent.solvedProblems || []).length === 0 ? (
+                      <span className="text-xs text-slate-500">Одоогоор бодлого бодоогүй байна.</span>
+                    ) : (
+                      selectedStudent.solvedProblems.map((pid) => (
+                        <span
+                          key={pid}
+                          className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-slate-900 border border-slate-800 text-emerald-400"
+                        >
+                          {pid.toUpperCase()}
+                        </span>
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-white/5 flex justify-between items-center text-xs text-slate-500">
-                <span>Joined: {student.createdAt?.toDate ? student.createdAt.toDate().toLocaleDateString() : 'Recent'}</span>
-                <span className="text-emerald-400 font-bold">Active</span>
+              <div className="px-6 py-4 border-t border-slate-800 flex justify-end bg-[#080e1a]">
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors"
+                >
+                  Хаах
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+
+        {/* Modal to Add Homework */}
+        <AddHomeworkModal
+          isOpen={isHwModalOpen}
+          onClose={() => setIsHwModalOpen(false)}
+          onCreated={() => {
+            console.log('Homework successfully added');
+          }}
+        />
+      </div>
     </div>
   );
-};
-
-export default SupervisorDashboard;
+}

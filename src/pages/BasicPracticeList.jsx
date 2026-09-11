@@ -1,102 +1,108 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore'; // Changed getDoc to onSnapshot
-import { auth, db } from '../firebase';
+// src/pages/BasicPracticeList.jsx
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { basicPracticeData } from '../data/basic-practice-data';
-import { useLanguage } from '../context/LanguageContext';
 
-const BasicPracticeList = () => {
-  const [loading, setLoading] = useState(true);
-  const [solvedProblems, setSolvedProblems] = useState([]);
-  const navigate = useNavigate();
-  const { t } = useLanguage();
+export default function BasicPracticeList() {
+  const [solvedIds, setSolvedIds] = useState([]);
 
+  // Load persistent solved problem IDs from localStorage
   useEffect(() => {
-    // 1. Listen for Auth
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        navigate('/login');
-      } else {
-        // 2. Listen for Real-time Database Updates (onSnapshot)
-        const docRef = doc(db, "users", user.uid);
-        
-        const unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const solved = data.solvedProblems || [];
-                setSolvedProblems(solved);
-                console.log("Real-time Solved Update:", solved);
-            }
-            setLoading(false);
-        }, (error) => {
-            console.error("Error listening to user progress:", error);
-            setLoading(false);
-        });
-
-        // Cleanup listener when component unmounts
-        return () => unsubscribeSnapshot();
+    try {
+      const stored = localStorage.getItem('mca_solved_problems');
+      if (stored) {
+        setSolvedIds(JSON.parse(stored));
       }
-    });
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
-    return () => unsubscribeAuth();
-  }, [navigate]);
-
-  if (loading) return null;
+  // Filter out compilation/overview items (like bp-16) for count calculations
+  const countableProblems = basicPracticeData.filter((p) => p.testCases && p.testCases.length > 0);
+  const solvedCount = countableProblems.filter((p) => solvedIds.includes(p.id)).length;
 
   return (
-    <div className="container mx-auto px-6 pt-28 pb-16 relative z-10">
-      {/* Decorative Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-[#070b14] text-slate-100 py-12 px-6 sm:px-8 font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
+          <div>
+            <div className="flex items-center space-x-3 mb-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                RGB7 Суурь Дасгалууд
+              </span>
+            </div>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">
+              Анхан шатны дадлага
+            </h1>
+            <p className="text-sm text-slate-400 mt-1">
+              Програмчлалын суурь чадвар олгох SPOJ RGB7 системийн бодлогууд
+            </p>
+          </div>
 
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tight gradient-text">{t('practice_basic_title')}</h1>
-        <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
-          {t('basic_practice_list_desc')}
-        </p>
-      </div>
+          <div className="flex items-center space-x-3">
+            <div className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800/80 shadow-sm flex items-center space-x-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-xs font-semibold text-slate-300">
+                Бодогдсон: <span className="text-emerald-400 font-bold">{solvedCount}</span> / {countableProblems.length}
+              </span>
+            </div>
+          </div>
+        </div>
 
-      <div className="max-w-4xl mx-auto glass-card rounded-3xl p-6 border border-white/5 shadow-2xl">
-        <ul className="space-y-3">
+        {/* Problems List Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {basicPracticeData.map((problem) => {
-            const isSolved = solvedProblems.includes(problem.id);
+            const isSolved = solvedIds.includes(problem.id);
+            const isCompilation = !problem.testCases || problem.testCases.length === 0;
 
             return (
-              <li key={problem.id}>
-                <Link 
-                  to={`/practice-basic/${problem.id}`}
-                  className={`
-                    block w-full text-left py-3 px-5 rounded-xl transition-all duration-300 border flex justify-between items-center group
-                    ${isSolved 
-                        ? "bg-emerald-500/10 border-emerald-500/35 hover:bg-emerald-500/15 shadow-[0_0_15px_rgba(16,185,129,0.1)]" // Solved Style
-                        : "bg-white/5 border-white/5 hover:border-sky-500/30 hover:bg-sky-500/10 hover:shadow-md hover:shadow-sky-500/5" // Default Style
-                    }
-                  `}
-                >
-                  <span className={`text-sm font-bold tracking-wide ${isSolved ? "text-emerald-300" : "text-slate-300 group-hover:text-white"}`}>
-                    {t(problem.id + '_name')}
-                  </span>
-                  
-                  {isSolved ? (
-                     <div className="flex items-center gap-2 bg-emerald-500/20 px-3.5 py-1 rounded-xl border border-emerald-500/40">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">{t('solved')}</span>
-                     </div>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-slate-500 group-hover:text-sky-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+              <Link
+                key={problem.id}
+                to={`/practice-basic/${problem.id}`}
+                className="group p-5 rounded-2xl bg-[#0b1120] border border-slate-800/70 hover:border-sky-500/50 hover:bg-[#0d1629] transition-all duration-200 flex items-center justify-between shadow-sm"
+              >
+                <div className="space-y-2 pr-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 px-2 py-0.5 rounded border border-sky-800/30">
+                      {problem.id.toUpperCase()}
+                    </span>
+
+                    {isSolved && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                        <span>✓</span>
+                        <span>Бодогдсон</span>
+                      </span>
+                    )}
+
+                    {isCompilation && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+                        Нэгтгэл видео
+                      </span>
+                    )}
+                  </div>
+
+                  <h2 className="text-base font-bold text-white group-hover:text-sky-300 transition-colors">
+                    {problem.name}
+                  </h2>
+
+                  {problem.spojLink && (
+                    <span className="text-xs text-slate-500 block truncate">
+                      SPOJ код: RGB7{problem.id.replace('bp-', '').padStart(3, '0')}
+                    </span>
                   )}
-                </Link>
-              </li>
+                </div>
+
+                <div className="flex items-center space-x-1 text-slate-500 group-hover:text-sky-400 text-xs font-semibold shrink-0 transition-colors">
+                  <span>{isCompilation ? 'Үзэх' : 'Бодох'}</span>
+                  <span className="transform group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </div>
+              </Link>
             );
           })}
-        </ul>
+        </div>
       </div>
     </div>
   );
-};
-
-export default BasicPracticeList;
+}

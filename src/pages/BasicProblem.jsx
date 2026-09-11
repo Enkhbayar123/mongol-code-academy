@@ -1,276 +1,463 @@
+// src/pages/BasicProblem.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import Confetti from 'react-confetti';
-import { basicProblemMap, basicPracticeData } from '../data/basic-practice-data';
+import { useParams, useNavigate } from 'react-router-dom';
+import { basicPracticeData, basicProblemMap } from '../data/basic-practice-data';
 import CodeEditorWindow from '../components/CodeEditorWindow';
-import { executeCode, LANGUAGE_VERSIONS } from '../utils/judge0';
-import { useLanguage } from '../context/LanguageContext';
+import { executeCode, runTestCases } from '../utils/judge0';
 
-// --- FIREBASE IMPORTS ---
-import { doc, setDoc, arrayUnion } from "firebase/firestore"; 
-import { auth, db } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+// Universal starter template for C++
+const CPP_INITIAL_CODE = `#include <iostream>
+using namespace std;
 
-const BOILERPLATES = {
-  python: `import sys\n\nfor line in sys.stdin:\n    print(f"Output: {line.strip()}")`,
-  javascript: `const fs = require('fs');\nconst stdin = fs.readFileSync(0, 'utf-8');\nconsole.log("Output:", stdin);`,
-  "c++": `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write code here\n    return 0;\n}`,
-  java: `import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (scanner.hasNext()) {\n            System.out.println(scanner.next());\n        }\n    }\n}`
-};
+int main() {
+	// your code goes here
+	return 0;
+}`;
 
-const BasicProblem = () => {
+export default function BasicProblem() {
   const { id } = useParams();
-  const problem = basicProblemMap[id];
-  const { t, language } = useLanguage();
-  
-  const currentIndex = basicPracticeData.findIndex(p => p.id === id);
-  const prevProblem = currentIndex > 0 ? basicPracticeData[currentIndex - 1] : null;
+  const navigate = useNavigate();
+  const problem = basicProblemMap[id] || basicPracticeData[0];
 
-  const [languageOption, setLanguageOption] = useState("python");
-  const [code, setCode] = useState("");
+  // Determine the next problem for auto-progression
+  const currentIndex = basicPracticeData.findIndex((p) => p.id === problem.id);
+  const nextProblem =
+    currentIndex !== -1 && currentIndex < basicPracticeData.length - 1
+      ? basicPracticeData[currentIndex + 1]
+      : null;
+
+  // Persisted solved problems array from localStorage
+  const [solvedProblems, setSolvedProblems] = useState(() => {
+    try {
+      const stored = localStorage.getItem('mca_solved_problems');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const isSolved = solvedProblems.includes(problem.id);
+
+  // Left pane sub-tab: 'problem' (БОДЛОГО) | 'video' (ВИДЕО ТАЙЛБАР)
+  const [leftTab, setLeftTab] = useState('problem');
+
+  // Code editor & execution state
+  const [selectedLanguage, setSelectedLanguage] = useState(problem.defaultLanguage || 'python');
+  const [sourceCode, setSourceCode] = useState(problem.starterCode || '');
+  const [customInput, setCustomInput] = useState(
+    problem.testCases && problem.testCases.length > 0 ? problem.testCases[0].input : ''
+  );
+  const [bottomTab, setBottomTab] = useState('testcase'); // 'testcase' | 'result'
   const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState('problem');
-  const [user, setUser] = useState(null);
+  const [executionResult, setExecutionResult] = useState(null);
+  const [batchResults, setBatchResults] = useState(null);
 
-  // UI States
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [failureDetails, setFailureDetails] = useState(null); 
-  const [consoleOutput, setConsoleOutput] = useState("Ready to run.");
-
+  // Sync state when navigating between problems
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    if (problem) {
+      if (selectedLanguage === 'cpp' || selectedLanguage === 'c++') {
+        setSourceCode(CPP_INITIAL_CODE);
+      } else {
+        setSourceCode(problem.starterCode || '');
+      }
+      if (problem.testCases && problem.testCases.length > 0) {
+        setCustomInput(problem.testCases[0].input);
+      }
+      setExecutionResult(null);
+      setBatchResults(null);
+      setBottomTab('testcase');
+    }
+  }, [problem.id]);
+
+  const markAsSolved = (problemId) => {
+    setSolvedProblems((prev) => {
+      if (!prev.includes(problemId)) {
+        const updated = [...prev, problemId];
+        try {
+          localStorage.setItem('mca_solved_problems', JSON.stringify(updated));
+        } catch (e) {
+          console.error(e);
+        }
+        return updated;
+      }
+      return prev;
     });
-    return () => unsubscribe();
-  }, []);
+  };
 
-  useEffect(() => {
-    if (problem) {
-        setLanguageOption(problem.defaultLanguage || "python");
-        setCode(problem.starterCode || "");
-        setConsoleOutput("Ready to run.");
-        setShowSuccess(false);
-        setFailureDetails(null);
-    }
-  }, [problem]);
+  // Switch between Python and C++ templates
+  const handleLanguageChange = (e) => {
+    const newLang = e.target.value;
+    setSelectedLanguage(newLang);
 
-  useEffect(() => {
-    if (problem) {
-        if (languageOption === (problem.defaultLanguage || "python")) {
-            setCode(problem.starterCode || "");
-        } else {
-            setCode(BOILERPLATES[languageOption] || "// Write your code here");
-        }
-    }
-  }, [languageOption, problem]);
-
-  if (!problem) return <div className="text-white text-center mt-20">Problem not found</div>;
-
-  // --- ROBUST SAVE FUNCTION ---
-  const markProblemAsSolved = async () => {
-    if (!user) {
-        console.error("User not logged in. Cannot save.");
-        return;
-    }
-    try {
-        const userRef = doc(db, "users", user.uid);
-        await setDoc(userRef, {
-            solvedProblems: arrayUnion(id) 
-        }, { merge: true });
-        
-        console.log(`SUCCESS: Problem ${id} saved to user ${user.uid}`);
-    } catch (error) {
-        console.error("FAILED to save progress:", error);
+    if (newLang === 'cpp') {
+      setSourceCode(CPP_INITIAL_CODE);
+    } else {
+      setSourceCode(problem.starterCode || '');
     }
   };
 
-  const handleRunCode = async () => {
+  // Execute single test case
+  const handleRun = async () => {
     setIsRunning(true);
-    setShowSuccess(false);
-    setFailureDetails(null);
-    setConsoleOutput("Initializing...");
-
-    if (!problem.testCases || problem.testCases.length === 0) {
-        setConsoleOutput("Error: No test cases found.");
-        setIsRunning(false);
-        return;
-    }
-
-    let failureFound = null;
+    setBottomTab('result');
+    setBatchResults(null);
 
     try {
-        for (let i = 0; i < problem.testCases.length; i++) {
-            const testCase = problem.testCases[i];
-            setConsoleOutput(`Running Test Case ${i + 1}/${problem.testCases.length}...`);
-            
-            const result = await executeCode(code, languageOption, testCase.input);
-            
-            let rawOutput = result.stdout;
-            if (rawOutput === null || rawOutput === undefined) rawOutput = "";
-            
-            const actual = rawOutput.toString().trim();
-            const expected = testCase.output.toString().trim();
-            const error = result.stderr;    
-
-            if (error) {
-                failureFound = { type: "Runtime Error", testCaseIndex: i + 1, input: testCase.input, expected, actual: error, isError: true };
-                break;
-            } else if (actual !== expected) {
-                failureFound = { type: "Wrong Answer", testCaseIndex: i + 1, input: testCase.input, expected, actual: actual === "" ? "(No Output)" : actual, isError: false };
-                break;
-            }
-        }
-
-        if (failureFound) {
-            setConsoleOutput("Execution finished."); 
-            setFailureDetails(failureFound);
-        } else {
-            setConsoleOutput("All test cases passed! Saving progress...");
-            await markProblemAsSolved();
-            setConsoleOutput("All test cases passed! Progress Saved.");
-            setShowSuccess(true);
-        }
-
+      const res = await executeCode(sourceCode, selectedLanguage, customInput, problem.id);
+      setExecutionResult(res);
     } catch (err) {
-        console.error(err);
-        setConsoleOutput("System Error: " + err.message);
+      setExecutionResult({
+        stdout: '',
+        stderr: err.message || 'Алдаа гарлаа.',
+        status: { description: 'Runtime Error' }
+      });
     } finally {
-        setIsRunning(false);
+      setIsRunning(false);
     }
   };
 
-  const descKey = problem.id + '_desc';
-  const translatedDesc = t(descKey);
-  const problemDesc = translatedDesc === descKey ? problem.description : translatedDesc;
+  // Run full suite of test cases
+  const handleSubmit = async () => {
+    if (!problem.testCases || problem.testCases.length === 0) return;
+
+    setIsRunning(true);
+    setBottomTab('result');
+    setExecutionResult(null);
+
+    try {
+      const report = await runTestCases(
+        sourceCode,
+        selectedLanguage,
+        problem.testCases,
+        problem.id
+      );
+      setBatchResults(report);
+
+      if (report.allPassed) {
+        markAsSolved(problem.id);
+      }
+    } catch (err) {
+      setExecutionResult({
+        stdout: '',
+        stderr: err.message || 'Алдаа гарлаа.',
+        status: { description: 'Error' }
+      });
+    } finally {
+      setIsRunning(false);
+    }
+  };
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-80px)] overflow-hidden relative text-white bg-[#080c14]">
-      
-      {showSuccess && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md animate-fade-in">
-            <Confetti numberOfPieces={200} recycle={false} />
-            <div className="glass-card border-emerald-500/30 p-10 rounded-3xl text-center shadow-2xl max-w-md mx-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
-                <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/5 animate-pulse">
-                    <svg className="w-10 h-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <h2 className="text-3xl font-black text-slate-100 mb-3 tracking-tight">{t('congrats')}</h2>
-                <div className="flex gap-4 justify-center mt-8">
-                    <button onClick={() => setShowSuccess(false)} className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl font-bold transition-all text-sm">{t('close')}</button>
-                    <Link to="/practice-basic" className="px-6 py-3 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-xl font-bold transition-all text-sm shadow-md shadow-emerald-500/20">{t('next_problem')}</Link>
-                </div>
-            </div>
-        </div>
-      )}
+    <div className="min-h-screen bg-[#070b14] text-slate-100 flex flex-col font-sans">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
+        {/* =========================================
+            LEFT HALF: EXACT MATCH TO DESIGN
+           ========================================= */}
+        <div className="h-[100vh] overflow-y-auto bg-[#070d19] border-r border-slate-800/80 p-8 flex flex-col">
+          {/* Top Bar: Tabs & Back Button */}
+          <div className="flex items-center justify-between pb-8">
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setLeftTab('problem')}
+                className={`px-5 py-2 text-xs font-bold rounded-lg tracking-wider transition-all ${
+                  leftTab === 'problem'
+                    ? 'bg-[#003465] text-[#38bdf8] border border-[#0284c7]/40 shadow-sm'
+                    : 'text-slate-400 hover:text-white font-semibold'
+                }`}
+              >
+                БОДЛОГО
+              </button>
 
-      {failureDetails && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md animate-fade-in">
-            <div className="glass-card border-red-500/30 p-10 rounded-3xl text-center shadow-2xl max-w-lg mx-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent pointer-events-none"></div>
-                <div className="w-20 h-20 bg-red-500/10 border border-red-500/25 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-red-500/5">
-                    <svg className="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                </div>
-                <h2 className="text-3xl font-black text-slate-100 mb-2.5 tracking-tight">{failureDetails.type === "Runtime Error" ? t('error_occurred') : t('wrong_answer')}</h2>
-                <p className="text-slate-400 mb-6 text-sm font-semibold">
-                    {language === 'mn' ? `Тест №${failureDetails.testCaseIndex} дээр алдаа гарлаа.` : 
-                     language === 'ko' ? `테스트 ${failureDetails.testCaseIndex}번 실패` : 
-                     `Failed on Test Case #${failureDetails.testCaseIndex}`}
-                </p>
-                <div className="bg-black/35 border border-white/5 rounded-2xl p-5 mb-6 text-left text-sm font-mono space-y-3.5 max-h-[30vh] overflow-y-auto">
-                    <div>
-                      <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider mb-1">{t('input')}</span>
-                      <span className="text-slate-300 font-semibold">{failureDetails.input}</span>
-                    </div>
-                    <div>
-                      <span className="text-emerald-500/80 block text-[10px] uppercase font-bold tracking-wider mb-1">{t('expected')}</span>
-                      <span className="text-emerald-400 font-semibold">{failureDetails.expected}</span>
-                    </div>
-                    <div>
-                      <span className="text-red-500/80 block text-[10px] uppercase font-bold tracking-wider mb-1">{t('your_output')}</span>
-                      <span className="text-red-400 font-semibold whitespace-pre-wrap block bg-red-950/20 p-2.5 rounded-xl border border-red-500/10 mt-1">{failureDetails.actual}</span>
-                    </div>
-                </div>
-                <div className="flex gap-4 justify-center">
-                    {prevProblem && (<Link to={`/practice-basic/${prevProblem.id}`} className="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 rounded-xl font-bold transition-all text-sm">{t('prev_problem')}</Link>)}
-                    <button onClick={() => setFailureDetails(null)} className="px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white rounded-xl font-bold transition-all text-sm shadow-md shadow-red-500/20">{t('retry')}</button>
-                </div>
+              <button
+                onClick={() => setLeftTab('video')}
+                className={`px-5 py-2 text-xs font-bold rounded-lg tracking-wider transition-all ${
+                  leftTab === 'video'
+                    ? 'bg-[#003465] text-[#38bdf8] border border-[#0284c7]/40 shadow-sm'
+                    : 'text-slate-400 hover:text-white font-semibold'
+                }`}
+              >
+                ВИДЕО ТАЙЛБАР
+              </button>
             </div>
-        </div>
-      )}
 
-      {/* LEFT PANEL */}
-      <div className="w-full md:w-1/2 h-full flex flex-col border-r border-white/5 bg-[#090e18]">
-        <div className="p-4 border-b border-white/5 flex gap-4 bg-slate-950/20">
-            <button 
-              onClick={() => setActiveTab('problem')} 
-              className={`text-xs font-extrabold tracking-wider uppercase px-4 py-2 rounded-xl transition-all ${
-                activeTab === 'problem' 
-                  ? 'text-sky-400 bg-sky-500/10 border border-sky-500/25 shadow-md shadow-sky-500/5' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
-              }`}
+            {/* Back Button to list */}
+            <button
+              onClick={() => navigate('/practice-basic')}
+              className="flex items-center space-x-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-slate-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-colors"
             >
-              {t('problem')}
+              <span>&larr;</span>
+              <span>Буцах</span>
             </button>
-            <button 
-              onClick={() => setActiveTab('solution')} 
-              className={`text-xs font-extrabold tracking-wider uppercase px-4 py-2 rounded-xl transition-all ${
-                activeTab === 'solution' 
-                  ? 'text-sky-400 bg-sky-500/10 border border-sky-500/25 shadow-md shadow-sky-500/5' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
-              }`}
-            >
-              {t('video_solution')}
-            </button>
-            <Link to="/practice-basic" className="ml-auto text-xs font-bold text-slate-400 hover:text-white transition-colors bg-white/5 border border-white/10 hover:border-white/20 rounded-xl px-4 py-2 flex items-center justify-center gap-1">
-              <span>←</span>
-              <span>{t('back')}</span>
-            </Link>
-        </div>
-        <div className="flex-grow overflow-y-auto p-6 text-slate-300">
-            <h1 className="text-2xl font-black text-slate-100 mb-5">{t(problem.id + '_name')}</h1>
-            {activeTab === 'problem' ? (
-                <article className="prose prose-invert max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: problemDesc }} />
-            ) : (
-                <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
-                    <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${problem.videoId}`} frameBorder="0" allowFullScreen></iframe>
-                </div>
-            )}
-        </div>
-      </div>
+          </div>
 
-      {/* RIGHT PANEL */}
-      <div className="w-full md:w-1/2 h-full flex flex-col bg-[#05080e]">
-        <div className="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-slate-950/20">
-            <div className="flex items-center gap-3">
-                <span className="text-slate-400 text-xs font-extrabold tracking-wider uppercase">{t('language_label')}</span>
-                <select 
-                  value={languageOption} 
-                  onChange={(e) => setLanguageOption(e.target.value)} 
-                  className="bg-[#090e18] text-slate-200 text-xs font-bold border border-white/10 rounded-xl px-3.5 py-2 cursor-pointer focus:outline-none focus:border-sky-500/40 transition-colors"
-                >
-                  {Object.keys(LANGUAGE_VERSIONS).map((lang) => <option key={lang} value={lang}>{lang}</option>)}
-                </select>
+          {/* Problem Statement Content */}
+          {leftTab === 'problem' && (
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3">
+                <h1 className="text-3xl font-extrabold text-white tracking-tight">
+                  {problem.name}
+                </h1>
+                {isSolved && (
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    ✓ Бодогдсон
+                  </span>
+                )}
+              </div>
+
+              <div
+                className="text-slate-300 text-sm leading-relaxed space-y-4 [&_h4]:font-semibold [&_h4]:text-white [&_h4]:mt-4 [&_h4]:mb-1 [&_p]:text-slate-300 [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:m-0 [&_pre]:font-mono [&_pre]:text-sm [&_pre]:text-slate-200"
+                dangerouslySetInnerHTML={{ __html: problem.description }}
+              />
             </div>
-            <button 
-              onClick={handleRunCode} 
-              disabled={isRunning} 
-              className="bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white px-5 py-2 rounded-xl text-xs font-bold tracking-wide uppercase shadow-md shadow-emerald-500/10 hover:shadow-emerald-500/25 transition-all duration-300 transform hover:scale-[1.02] flex items-center gap-1.5 disabled:opacity-50"
-            >
-              {isRunning && <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
-              <span>{isRunning ? t('running') : t('run')}</span>
-            </button>
+          )}
+
+          {/* Video Lesson / Tutorial */}
+          {leftTab === 'video' && (
+            <div className="space-y-4">
+              <h1 className="text-2xl font-bold text-white mb-2">{problem.name} - Видео тайлбар</h1>
+              {problem.videoId ? (
+                <div className="rounded-xl overflow-hidden border border-slate-800 bg-black aspect-video">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${problem.videoId}`}
+                    title={problem.name}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <p className="text-slate-400 text-sm">Одоогоор видео тайлбар ороогүй байна.</p>
+              )}
+            </div>
+          )}
         </div>
-        <div className="flex-grow"><CodeEditorWindow code={code} onChange={(key, value) => setCode(value)} language={languageOption} theme="vs-dark" /></div>
-        <div className="h-56 border-t border-white/5 bg-[#03060c] p-5 overflow-y-auto font-mono text-sm">
-            <div className="text-slate-500 mb-3.5 font-bold uppercase text-[10px] tracking-wider border-b border-white/5 pb-2.5 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-slate-500 animate-pulse"></span>
-              <span>{t('output_console')}</span>
+
+        {/* =========================================
+            RIGHT HALF: CODE EDITOR & RUNNER CONSOLE
+           ========================================= */}
+        <div className="flex flex-col h-[100vh] bg-[#0b1120]">
+          {/* Header Controls */}
+          <div className="h-14 border-b border-slate-800/80 px-6 flex items-center justify-between bg-[#080e1a]">
+            <select
+              value={selectedLanguage}
+              onChange={handleLanguageChange}
+              className="bg-slate-900 text-slate-200 text-xs font-semibold border border-slate-700/80 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            >
+              <option value="python">Python (3.10)</option>
+              <option value="cpp">C++ (GCC 11.2)</option>
+            </select>
+
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={handleRun}
+                disabled={isRunning}
+                className="px-4 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors disabled:opacity-50"
+              >
+                {isRunning ? 'Ажиллаж байна...' : 'Ажиллуулах'}
+              </button>
+
+              <button
+                onClick={handleSubmit}
+                disabled={isRunning}
+                className="px-4 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors disabled:opacity-50 shadow-sm"
+              >
+                Шалгах
+              </button>
             </div>
-            <pre className="whitespace-pre-wrap text-slate-300 font-mono text-xs leading-relaxed">{consoleOutput}</pre>
+          </div>
+
+          {/* Monaco Code Editor with syntax highlighting distinctions */}
+          <div className="flex-1 min-h-[300px] border-b border-slate-800/80">
+            <CodeEditorWindow
+              code={sourceCode}
+              onChange={(action, data) => setSourceCode(data)}
+              language={selectedLanguage === 'cpp' ? 'cpp' : 'python'}
+              theme="vs-dark"
+            />
+          </div>
+
+          {/* Bottom Console Panel */}
+          <div className="h-64 flex flex-col bg-[#070d19]">
+            {/* Console Sub-Tabs */}
+            <div className="flex items-center border-b border-slate-800 px-6 space-x-4">
+              <button
+                onClick={() => setBottomTab('testcase')}
+                className={`py-2 text-xs font-semibold border-b-2 transition-colors ${
+                  bottomTab === 'testcase'
+                    ? 'border-sky-500 text-sky-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Тест жишээ
+              </button>
+              <button
+                onClick={() => setBottomTab('result')}
+                className={`py-2 text-xs font-semibold border-b-2 transition-colors ${
+                  bottomTab === 'result'
+                    ? 'border-sky-500 text-sky-400'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                Үр дүн
+              </button>
+            </div>
+
+            {/* Console Body */}
+            <div className="flex-1 p-5 overflow-y-auto text-xs font-mono">
+              {bottomTab === 'testcase' && (
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    {problem.testCases?.slice(0, 3).map((tc, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setCustomInput(tc.input)}
+                        className={`px-3 py-1 rounded text-xs border transition-colors ${
+                          customInput === tc.input
+                            ? 'bg-slate-800 border-slate-600 text-white font-semibold'
+                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'
+                        }`}
+                      >
+                        Жишээ {idx + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1 font-sans">
+                      Оролт (stdin):
+                    </label>
+                    <textarea
+                      value={customInput}
+                      onChange={(e) => setCustomInput(e.target.value)}
+                      rows={3}
+                      className="w-full bg-[#050913] border border-slate-800 rounded-lg p-3 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {bottomTab === 'result' && (
+                <div className="space-y-3">
+                  {isRunning && (
+                    <div className="text-slate-400 flex items-center space-x-2">
+                      <div className="w-3 h-3 border-2 border-sky-500 border-t-transparent rounded-full animate-spin" />
+                      <span className="font-sans">Шалгаж байна...</span>
+                    </div>
+                  )}
+
+                  {batchResults && !isRunning && (
+                    <div>
+                      {/* Success / Congratulations Banner */}
+                      {batchResults.allPassed ? (
+                        <div className="bg-emerald-950/40 border border-emerald-600/40 p-4 rounded-xl flex items-center justify-between shadow-sm">
+                          <div>
+                            <h3 className="text-base font-bold text-emerald-400 font-sans flex items-center space-x-1.5">
+                              <span>Баяр хүргэе! 🎉</span>
+                            </h3>
+                            <p className="text-xs text-emerald-200/80 font-sans mt-0.5">
+                              Бүх {batchResults.total} тест амжилттай давж, бодлого бодогдлоо.
+                            </p>
+                          </div>
+
+                          {nextProblem && (
+                            <button
+                              onClick={() => navigate(`/practice-basic/${nextProblem.id}`)}
+                              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-xs font-semibold rounded-lg shadow transition-all flex items-center space-x-1"
+                            >
+                              <span>Дараагийн бодлого</span>
+                              <span>&rarr;</span>
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-3 mb-3">
+                          <span className="text-sm font-bold text-rose-400">
+                            Буруу хариулт
+                          </span>
+                          <span className="text-slate-400">
+                            {batchResults.passedCount} / {batchResults.total} тест давсан
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Error Breakdown on Failure */}
+                      {!batchResults.allPassed && (
+                        <div className="bg-[#050913] border border-rose-950/60 p-4 rounded-lg space-y-2">
+                          {(() => {
+                            const failed = batchResults.results.find((r) => !r.passed);
+                            if (!failed) return null;
+                            return (
+                              <>
+                                <p className="text-rose-400 font-semibold font-sans">
+                                  Тест №{failed.testCaseIndex} дээр алдаа гарлаа:
+                                </p>
+                                <div>
+                                  <span className="text-slate-500 block">Оролт:</span>
+                                  <pre className="text-slate-300 mt-0.5">{failed.input}</pre>
+                                </div>
+                                <div>
+                                  <span className="text-slate-500 block">Хүлээгдэж буй:</span>
+                                  <pre className="text-emerald-400 mt-0.5">{failed.expected}</pre>
+                                </div>
+                                <div>
+                                  <span className="text-slate-500 block">Таны хариу:</span>
+                                  <pre className="text-rose-400 mt-0.5">
+                                    {failed.actual || '(Хоосон)'}
+                                  </pre>
+                                </div>
+                                {failed.stderr && (
+                                  <div>
+                                    <span className="text-slate-500 block">Алдааны мэдээлэл:</span>
+                                    <pre className="text-rose-400 mt-0.5">{failed.stderr}</pre>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Single Run Result */}
+                  {executionResult && !batchResults && !isRunning && (
+                    <div className="space-y-2">
+                      <span
+                        className={`font-semibold ${
+                          executionResult.stderr ? 'text-rose-400' : 'text-emerald-400'
+                        }`}
+                      >
+                        {executionResult.status?.description || 'Гүйцэтгэл дууслаа'}
+                      </span>
+                      {executionResult.stdout && (
+                        <div>
+                          <span className="text-slate-500 block">Гаралт (stdout):</span>
+                          <pre className="bg-[#050913] p-3 rounded border border-slate-800 text-slate-200 mt-1">
+                            {executionResult.stdout}
+                          </pre>
+                        </div>
+                      )}
+                      {executionResult.stderr && (
+                        <div>
+                          <span className="text-slate-500 block">Алдаа (stderr):</span>
+                          <pre className="bg-rose-950/20 p-3 rounded border border-rose-900/40 text-rose-300 mt-1">
+                            {executionResult.stderr}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {!isRunning && !executionResult && !batchResults && (
+                    <p className="text-slate-500 font-sans">
+                      Үр дүнг харахын тулд 'Ажиллуулах' эсвэл 'Шалгах' товчийг дарна уу.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default BasicProblem;
+}

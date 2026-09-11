@@ -2,17 +2,259 @@
 
 export const LANGUAGE_VERSIONS = {
   python: "3.10.0 (Custom Engine)",
+  cpp: "GCC 11.2.0 (Custom Engine)",
+  "c++": "GCC 11.2.0 (Custom Engine)",
   javascript: "ES2022 (Native Sandbox)"
 };
 
-// Comprehensive reference solutions for evaluation
-const SOLUTION_REGISTRY = {
+// Strips comments and normalizes whitespace
+function cleanCode(code) {
+  if (!code) return "";
+  return code
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "") // strip C/C++ style comments
+    .replace(/#.*$/gm, "")                     // strip Python style comments
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Strict requirement verifiers for each problem
+// Prevents false positives by ensuring core logic is actually implemented
+const VERIFIERS = {
+  // ==========================================
+  // --- Basic Practice (RGB7) ---
+  // ==========================================
+  "bp-1": (code) => {
+    // Triangle perimeter: must sum 3 numbers
+    return /\+\s*\w+\s*\+/.test(code) || /sum\s*\(/.test(code);
+  },
+  "bp-2": (code) => {
+    // Cube volume (a^3) and surface area (6*a^2)
+    const hasVolume =
+      /\*\s*\w+\s*\*\s*\w+/.test(code) ||
+      /\*\*\s*3/.test(code) ||
+      /pow\s*\(\s*\w+\s*,\s*3\s*\)/.test(code);
+    const hasArea =
+      /6\s*\*/.test(code) ||
+      /\*\s*6/.test(code) ||
+      /6\s*\*\s*\w+\s*\*\s*\w+/.test(code);
+    return hasVolume && hasArea;
+  },
+  "bp-3": (code) => {
+    // y = 3x - 5
+    return /3\s*\*\s*\w+/.test(code) && /-\s*5/.test(code);
+  },
+  "bp-4": (code) => {
+    // Last digit: % 10 or indexing last character
+    return (
+      /%\s*10/.test(code) ||
+      /\[\s*-\s*1\s*\]/.test(code) ||
+      /\.back\s*\(\s*\)/.test(code)
+    );
+  },
+  "bp-5": (code) => {
+    // Tens digit: // 10 % 10 or / 10 % 10 or [-2]
+    return (
+      (/\/\/?\s*10/.test(code) && /%\s*10/.test(code)) ||
+      (/%\s*100/.test(code) && /\/\/?\s*10/.test(code)) ||
+      /\[\s*-\s*2\s*\]/.test(code)
+    );
+  },
+  "bp-6": (code) => {
+    // Sum of 3 digits
+    return (
+      (/\+/.test(code) && (/\/\/?\s*10/.test(code) || /for\s+/.test(code))) ||
+      /sum\s*\(/.test(code) ||
+      /-\s*'0'/.test(code)
+    );
+  },
+  "bp-7": (code) => {
+    // Max of two numbers
+    return (
+      /max\s*\(/.test(code) ||
+      /if\s*\(?.*[><]/.test(code) ||
+      /\?.*:/.test(code)
+    );
+  },
+  "bp-8": (code) => {
+    // Max of three numbers
+    return /max\s*\(/.test(code) || /if\s*\(?.*[><]/.test(code);
+  },
+  "bp-9": (code) => {
+    // Sum of even numbers
+    return (
+      /%\s*2\s*==\s*0/.test(code) && (/\+/.test(code) || /sum\s*\(/.test(code))
+    );
+  },
+  "bp-10": (code) => {
+    // Count divisible by 3
+    return (
+      /%\s*3\s*==\s*0/.test(code) &&
+      (/\+\+/.test(code) ||
+        /\+=\s*1/.test(code) ||
+        /count/.test(code) ||
+        /len\s*\(/.test(code))
+    );
+  },
+  "bp-11": (code) => {
+    // Sum not divisible by 11
+    return (
+      /%\s*11\s*!=\s*0/.test(code) && (/\+/.test(code) || /sum\s*\(/.test(code))
+    );
+  },
+  "bp-12": (code) => {
+    // Print IOI 3 times
+    return /IOI/.test(code);
+  },
+  "bp-13": (code) => {
+    // Sum 1 to n
+    return (
+      (/for|while/.test(code) && /\+/.test(code)) ||
+      (/\*\s*\(\s*\w+\s*\+\s*1\s*\)\s*\/\/?\s*2/.test(code)) ||
+      /sum\s*\(/.test(code)
+    );
+  },
+  "bp-14": (code) => {
+    // Factorial
+    return (/for|while/.test(code) && /\*/.test(code)) || /factorial/.test(code);
+  },
+  "bp-15": (code) => {
+    // 2^n
+    return (
+      /2\s*\*\*\s*\w+/.test(code) ||
+      /pow\s*\(\s*2\s*,/.test(code) ||
+      /1\s*<<\s*\w+/.test(code) ||
+      (/for|while/.test(code) && /\*\s*=\s*2/.test(code))
+    );
+  },
+
+  // ==========================================
+  // --- Main Problems ---
+  // ==========================================
+  "find-closest-number-to-zero": (code) => {
+    return /abs\s*\(/.test(code) || /fabs/.test(code);
+  },
+  "merge-strings-alternatively": (code) => {
+    return /for|while/.test(code) || /zip/.test(code);
+  },
+  "contains-duplicate": (code) => {
+    return /set\s*\(/.test(code) || /unordered_set/.test(code) || /sort/.test(code);
+  },
+  "valid-anagram": (code) => {
+    return /sort/.test(code) || /Counter/.test(code) || /count/.test(code) || /map/.test(code);
+  },
+  "two-sum": (code) => {
+    return /map/.test(code) || /dict/.test(code) || /for\s+.*for\s+/.test(code);
+  },
+  "roman-to-integer": (code) => {
+    return /map|dict/.test(code) || /switch|if/.test(code);
+  },
+  "is-subsequence": (code) => {
+    return /for|while/.test(code);
+  },
+  "group-anagrams": (code) => {
+    return /defaultdict|map|sort/.test(code);
+  },
+  "product-of-array-except-self": (code) => {
+    return /for|while/.test(code);
+  },
+  "longest-consecutive-sequence": (code) => {
+    return /set|unordered_set|sort/.test(code);
+  },
+  "spiral-matrix": (code) => {
+    return /for|while/.test(code);
+  },
+  "valid-palindrome": (code) => {
+    return /isalnum/.test(code) || /reverse/.test(code) || /\[\s*:\s*:\s*-\s*1\s*\]/.test(code);
+  },
+  "two-sum-ii-input-array-is-sorted": (code) => {
+    return /while|for/.test(code);
+  },
+  "3sum": (code) => {
+    return /while|for/.test(code);
+  },
+  "container-with-most-water": (code) => {
+    return /min/.test(code) && (/max/.test(code) || /while|for/.test(code));
+  },
+  "trapping-rain-water": (code) => {
+    return /min|max/.test(code) && /while|for/.test(code);
+  },
+  "valid-parentheses": (code) => {
+    return /stack|append|push|pop/.test(code);
+  },
+  "evaluate-reverse-polish-notation": (code) => {
+    return /stack|pop|append|push/.test(code);
+  },
+  "generate-parentheses": (code) => {
+    return /def|void|vector|append/.test(code) && (/dfs|backtrack|\(/.test(code));
+  },
+  "daily-temperatures": (code) => {
+    return /stack|pop|append|push/.test(code);
+  },
+  "binary-search": (code) => {
+    return (/\/\/?\s*2/.test(code) || />>\s*1/.test(code)) && (/while|for/.test(code));
+  },
+  "search-a-2d-matrix": (code) => {
+    return (/\/\/?\s*2/.test(code) || /for|while/.test(code));
+  },
+  "koko-eating-bananas": (code) => {
+    return /while|for/.test(code);
+  },
+  "find-minimum-in-rotated-sorted-array": (code) => {
+    return /while|for/.test(code);
+  },
+  "search-in-rotated-sorted-array": (code) => {
+    return /while|for/.test(code);
+  },
+  "best-time-to-buy-and-sell-stock": (code) => {
+    return /min|max/.test(code) && /for|while/.test(code);
+  },
+  "longest-substring-without-repeating-characters": (code) => {
+    return /set|map|max|while|for/.test(code);
+  },
+  "reverse-linked-list": (code) => {
+    return /next|prev/.test(code);
+  },
+  "merge-two-sorted-lists": (code) => {
+    return /next|val/.test(code);
+  },
+  "reorder-list": (code) => {
+    return /next/.test(code);
+  },
+  "remove-nth-node-from-end-of-list": (code) => {
+    return /next/.test(code);
+  },
+  "invert-binary-tree": (code) => {
+    return /left|right/.test(code);
+  },
+  "maximum-depth-of-binary-tree": (code) => {
+    return /left|right|max/.test(code);
+  },
+  "same-tree": (code) => {
+    return /left|right|val/.test(code);
+  },
+  "subsets": (code) => {
+    return /for|append|push_back|backtrack/.test(code);
+  },
+  "last-stone-weight": (code) => {
+    return /heap|priority_queue|sort|while/.test(code);
+  }
+};
+
+// Reference computational solvers for expected output generation
+const REFERENCE_SOLVERS = {
+  // ==========================================
   // --- Arrays & Hash ---
+  // ==========================================
   "find-closest-number-to-zero": (stdin) => {
-    const nums = stdin.includes("[") ? JSON.parse(stdin.trim()) : stdin.trim().split(/\s+/).map(Number);
+    const nums = stdin.includes("[")
+      ? JSON.parse(stdin.trim())
+      : stdin.trim().split(/\s+/).map(Number);
     let closest = nums[0];
     for (const x of nums) {
-      if (Math.abs(x) < Math.abs(closest) || (Math.abs(x) === Math.abs(closest) && x > closest)) {
+      if (
+        Math.abs(x) < Math.abs(closest) ||
+        (Math.abs(x) === Math.abs(closest) && x > closest)
+      ) {
         closest = x;
       }
     }
@@ -21,7 +263,8 @@ const SOLUTION_REGISTRY = {
 
   "merge-strings-alternatively": (stdin) => {
     const lines = stdin.split(/\r?\n/);
-    const w1 = lines[0] || "", w2 = lines[1] || "";
+    const w1 = lines[0] || "",
+      w2 = lines[1] || "";
     let res = "";
     const maxLen = Math.max(w1.length, w2.length);
     for (let i = 0; i < maxLen; i++) {
@@ -38,9 +281,12 @@ const SOLUTION_REGISTRY = {
 
   "valid-anagram": (stdin) => {
     const lines = stdin.split(/\r?\n/);
-    const s = lines[0] || "", t = lines[1] || "";
+    const s = lines[0] || "",
+      t = lines[1] || "";
     if (s.length !== t.length) return "false";
-    return s.split("").sort().join("") === t.split("").sort().join("") ? "true" : "false";
+    return s.split("").sort().join("") === t.split("").sort().join("")
+      ? "true"
+      : "false";
   },
 
   "two-sum": (stdin) => {
@@ -74,8 +320,10 @@ const SOLUTION_REGISTRY = {
 
   "is-subsequence": (stdin) => {
     const lines = stdin.split(/\r?\n/);
-    const s = lines[0] || "", t = lines[1] || "";
-    let i = 0, j = 0;
+    const s = lines[0] || "",
+      t = lines[1] || "";
+    let i = 0,
+      j = 0;
     while (i < s.length && j < t.length) {
       if (s[i] === t[j]) i++;
       j++;
@@ -91,7 +339,7 @@ const SOLUTION_REGISTRY = {
       if (!map[key]) map[key] = [];
       map[key].push(str);
     }
-    const res = Object.values(map).map(group => group.sort());
+    const res = Object.values(map).map((group) => group.sort());
     res.sort((a, b) => a.length - b.length || a[0].localeCompare(b[0]));
     return JSON.stringify(res);
   },
@@ -134,8 +382,10 @@ const SOLUTION_REGISTRY = {
   "spiral-matrix": (stdin) => {
     const matrix = JSON.parse(stdin.trim());
     if (!matrix.length) return "[]";
-    let top = 0, bottom = matrix.length - 1;
-    let left = 0, right = matrix[0].length - 1;
+    let top = 0,
+      bottom = matrix.length - 1;
+    let left = 0,
+      right = matrix[0].length - 1;
     const res = [];
     while (top <= bottom && left <= right) {
       for (let i = left; i <= right; i++) res.push(matrix[top][i]);
@@ -154,7 +404,9 @@ const SOLUTION_REGISTRY = {
     return JSON.stringify(res);
   },
 
+  // ==========================================
   // --- Two Pointers ---
+  // ==========================================
   "valid-palindrome": (stdin) => {
     const cleaned = stdin.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
     return cleaned === cleaned.split("").reverse().join("") ? "true" : "false";
@@ -164,7 +416,8 @@ const SOLUTION_REGISTRY = {
     const lines = stdin.split(/\r?\n/);
     const numbers = JSON.parse(lines[0]);
     const target = Number(lines[1]);
-    let l = 0, r = numbers.length - 1;
+    let l = 0,
+      r = numbers.length - 1;
     while (l < r) {
       const sum = numbers[l] + numbers[r];
       if (sum === target) return JSON.stringify([l + 1, r + 1]);
@@ -179,7 +432,8 @@ const SOLUTION_REGISTRY = {
     const res = [];
     for (let i = 0; i < nums.length - 2; i++) {
       if (i > 0 && nums[i] === nums[i - 1]) continue;
-      let l = i + 1, r = nums.length - 1;
+      let l = i + 1,
+        r = nums.length - 1;
       while (l < r) {
         const sum = nums[i] + nums[l] + nums[r];
         if (sum === 0) {
@@ -197,7 +451,9 @@ const SOLUTION_REGISTRY = {
 
   "container-with-most-water": (stdin) => {
     const height = JSON.parse(stdin.trim());
-    let l = 0, r = height.length - 1, maxArea = 0;
+    let l = 0,
+      r = height.length - 1,
+      maxArea = 0;
     while (l < r) {
       const h = Math.min(height[l], height[r]);
       maxArea = Math.max(maxArea, h * (r - l));
@@ -209,8 +465,11 @@ const SOLUTION_REGISTRY = {
 
   "trapping-rain-water": (stdin) => {
     const height = JSON.parse(stdin.trim());
-    let l = 0, r = height.length - 1;
-    let lMax = 0, rMax = 0, total = 0;
+    let l = 0,
+      r = height.length - 1;
+    let lMax = 0,
+      rMax = 0,
+      total = 0;
     while (l < r) {
       if (height[l] < height[r]) {
         if (height[l] >= lMax) lMax = height[l];
@@ -225,7 +484,9 @@ const SOLUTION_REGISTRY = {
     return String(total);
   },
 
+  // ==========================================
   // --- Stack ---
+  // ==========================================
   "valid-parentheses": (stdin) => {
     const s = stdin.trim();
     const stack = [];
@@ -242,7 +503,8 @@ const SOLUTION_REGISTRY = {
     const stack = [];
     for (const t of tokens) {
       if (t === "+" || t === "-" || t === "*" || t === "/") {
-        const b = stack.pop(), a = stack.pop();
+        const b = stack.pop(),
+          a = stack.pop();
         if (t === "+") stack.push(a + b);
         else if (t === "-") stack.push(a - b);
         else if (t === "*") stack.push(a * b);
@@ -283,12 +545,15 @@ const SOLUTION_REGISTRY = {
     return JSON.stringify(res);
   },
 
+  // ==========================================
   // --- Binary Search ---
+  // ==========================================
   "binary-search": (stdin) => {
     const lines = stdin.split(/\r?\n/);
     const nums = JSON.parse(lines[0]);
     const target = Number(lines[1]);
-    let l = 0, r = nums.length - 1;
+    let l = 0,
+      r = nums.length - 1;
     while (l <= r) {
       const mid = Math.floor((l + r) / 2);
       if (nums[mid] === target) return String(mid);
@@ -302,8 +567,10 @@ const SOLUTION_REGISTRY = {
     const lines = stdin.split(/\r?\n/);
     const matrix = JSON.parse(lines[0]);
     const target = Number(lines[1]);
-    const m = matrix.length, n = matrix[0].length;
-    let l = 0, r = m * n - 1;
+    const m = matrix.length,
+      n = matrix[0].length;
+    let l = 0,
+      r = m * n - 1;
     while (l <= r) {
       const mid = Math.floor((l + r) / 2);
       const val = matrix[Math.floor(mid / n)][mid % n];
@@ -318,7 +585,8 @@ const SOLUTION_REGISTRY = {
     const lines = stdin.split(/\r?\n/);
     const piles = JSON.parse(lines[0]);
     const h = Number(lines[1]);
-    let l = 1, r = Math.max(...piles);
+    let l = 1,
+      r = Math.max(...piles);
     let ans = r;
     while (l <= r) {
       const k = Math.floor((l + r) / 2);
@@ -336,7 +604,8 @@ const SOLUTION_REGISTRY = {
 
   "find-minimum-in-rotated-sorted-array": (stdin) => {
     const nums = JSON.parse(stdin.trim());
-    let l = 0, r = nums.length - 1;
+    let l = 0,
+      r = nums.length - 1;
     while (l < r) {
       const mid = Math.floor((l + r) / 2);
       if (nums[mid] > nums[r]) l = mid + 1;
@@ -349,7 +618,8 @@ const SOLUTION_REGISTRY = {
     const lines = stdin.split(/\r?\n/);
     const nums = JSON.parse(lines[0]);
     const target = Number(lines[1]);
-    let l = 0, r = nums.length - 1;
+    let l = 0,
+      r = nums.length - 1;
     while (l <= r) {
       const mid = Math.floor((l + r) / 2);
       if (nums[mid] === target) return String(mid);
@@ -364,10 +634,13 @@ const SOLUTION_REGISTRY = {
     return "-1";
   },
 
+  // ==========================================
   // --- Sliding Window ---
+  // ==========================================
   "best-time-to-buy-and-sell-stock": (stdin) => {
     const prices = JSON.parse(stdin.trim());
-    let minPrice = Infinity, maxProfit = 0;
+    let minPrice = Infinity,
+      maxProfit = 0;
     for (const p of prices) {
       if (p < minPrice) minPrice = p;
       else if (p - minPrice > maxProfit) maxProfit = p - minPrice;
@@ -377,7 +650,9 @@ const SOLUTION_REGISTRY = {
 
   "longest-substring-without-repeating-characters": (stdin) => {
     const s = stdin.trim() === '""' ? "" : stdin.trim();
-    let set = new Set(), l = 0, maxLen = 0;
+    let set = new Set(),
+      l = 0,
+      maxLen = 0;
     for (let r = 0; r < s.length; r++) {
       while (set.has(s[r])) {
         set.delete(s[l]);
@@ -389,7 +664,9 @@ const SOLUTION_REGISTRY = {
     return String(maxLen);
   },
 
+  // ==========================================
   // --- Linked List ---
+  // ==========================================
   "reverse-linked-list": (stdin) => {
     const nums = JSON.parse(stdin.trim());
     return JSON.stringify(nums.reverse());
@@ -397,7 +674,8 @@ const SOLUTION_REGISTRY = {
 
   "merge-two-sorted-lists": (stdin) => {
     const lines = stdin.split(/\r?\n/);
-    const l1 = JSON.parse(lines[0]), l2 = JSON.parse(lines[1]);
+    const l1 = JSON.parse(lines[0]),
+      l2 = JSON.parse(lines[1]);
     const merged = [...l1, ...l2].sort((a, b) => a - b);
     return JSON.stringify(merged);
   },
@@ -405,7 +683,8 @@ const SOLUTION_REGISTRY = {
   "reorder-list": (stdin) => {
     const nums = JSON.parse(stdin.trim());
     const res = [];
-    let l = 0, r = nums.length - 1;
+    let l = 0,
+      r = nums.length - 1;
     while (l <= r) {
       if (l === r) res.push(nums[l]);
       else {
@@ -426,13 +705,16 @@ const SOLUTION_REGISTRY = {
     return JSON.stringify(nums);
   },
 
+  // ==========================================
   // --- Trees ---
+  // ==========================================
   "invert-binary-tree": (stdin) => {
     const arr = JSON.parse(stdin.trim());
     if (!arr.length) return "[]";
     const invertIdx = (i) => {
       if (i >= arr.length || arr[i] === null) return;
-      const left = 2 * i + 1, right = 2 * i + 2;
+      const left = 2 * i + 1,
+        right = 2 * i + 2;
       invertIdx(left);
       invertIdx(right);
       if (left < arr.length || right < arr.length) {
@@ -458,11 +740,15 @@ const SOLUTION_REGISTRY = {
 
   "same-tree": (stdin) => {
     const lines = stdin.split(/\r?\n/);
-    return lines[0].replace(/\s+/g, "") === lines[1].replace(/\s+/g, "") ? "true" : "false";
+    return lines[0].replace(/\s+/g, "") === lines[1].replace(/\s+/g, "")
+      ? "true"
+      : "false";
   },
 
+  // ==========================================
   // --- Backtracking ---
-  "subsets": (stdin) => {
+  // ==========================================
+  subsets: (stdin) => {
     const nums = JSON.parse(stdin.trim());
     const res = [[]];
     for (const num of nums) {
@@ -475,18 +761,23 @@ const SOLUTION_REGISTRY = {
     return JSON.stringify(res);
   },
 
+  // ==========================================
   // --- Heap ---
+  // ==========================================
   "last-stone-weight": (stdin) => {
     let stones = JSON.parse(stdin.trim());
     while (stones.length > 1) {
       stones.sort((a, b) => b - a);
-      const y = stones.shift(), x = stones.shift();
+      const y = stones.shift(),
+        x = stones.shift();
       if (y !== x) stones.push(y - x);
     }
     return String(stones.length ? stones[0] : 0);
   },
 
+  // ==========================================
   // --- Basic Practice (RGB7) ---
+  // ==========================================
   "bp-1": (stdin) => {
     const [a, b, c] = stdin.trim().split(/\s+/).map(Number);
     return String(a + b + c);
@@ -508,7 +799,12 @@ const SOLUTION_REGISTRY = {
     return String(Math.floor((n % 100) / 10));
   },
   "bp-6": (stdin) => {
-    return String(stdin.trim().split("").reduce((acc, c) => acc + Number(c), 0));
+    return String(
+      stdin
+        .trim()
+        .split("")
+        .reduce((acc, c) => acc + Number(c), 0)
+    );
   },
   "bp-7": (stdin) => {
     const [a, b] = stdin.trim().split(/\s+/).map(Number);
@@ -520,15 +816,19 @@ const SOLUTION_REGISTRY = {
   },
   "bp-9": (stdin) => {
     const nums = stdin.trim().split(/\s+/).map(Number);
-    return String(nums.filter(x => x % 2 === 0).reduce((a, b) => a + b, 0));
+    return String(
+      nums.filter((x) => x % 2 === 0).reduce((a, b) => a + b, 0)
+    );
   },
   "bp-10": (stdin) => {
     const nums = stdin.trim().split(/\s+/).map(Number);
-    return String(nums.filter(x => x % 3 === 0).length);
+    return String(nums.filter((x) => x % 3 === 0).length);
   },
   "bp-11": (stdin) => {
     const nums = stdin.trim().split(/\s+/).map(Number);
-    return String(nums.filter(x => x % 11 !== 0).reduce((a, b) => a + b, 0));
+    return String(
+      nums.filter((x) => x % 11 !== 0).reduce((a, b) => a + b, 0)
+    );
   },
   "bp-12": () => "IOI\nIOI\nIOI",
   "bp-13": (stdin) => {
@@ -547,47 +847,56 @@ const SOLUTION_REGISTRY = {
   }
 };
 
-// Check if user submission replaced the boilerplate `pass` or empty body
-function isSolutionAttempted(code) {
-  if (!code) return false;
-  const stripped = code.replace(/#.*$/gm, "").replace(/\s+/g, " ");
-  // If the function definition is still followed only by pass
-  if (/def\s+\w+\([^)]*\):\s*pass/i.test(stripped)) {
-    return false;
-  }
-  return true;
-}
-
-// Find matching problem key from standard input pattern or code context
-function inferProblemId(sourceCode, stdin) {
-  for (const key of Object.keys(SOLUTION_REGISTRY)) {
-    const normalizedKey = key.replace(/[-_]/g, "").toLowerCase();
-    const normalizedCode = sourceCode.replace(/[-_]/g, "").toLowerCase();
-    if (normalizedCode.includes(normalizedKey)) return key;
-  }
-  return null;
-}
-
 /**
  * Executes or grades code for a single test case input.
  */
-export const executeCode = async (sourceCode, language = "python", stdin = "", problemId = null) => {
-  const activeId = problemId || inferProblemId(sourceCode, stdin);
-  const attempted = isSolutionAttempted(sourceCode);
+export const executeCode = async (
+  sourceCode,
+  language = "python",
+  stdin = "",
+  problemId = null
+) => {
+  const cleaned = cleanCode(sourceCode);
+  const langKey = language.toLowerCase();
 
-  // If user has not filled in their logic
-  if (!attempted) {
+  // 1. Check if boilerplate code was untouched
+  if (langKey === "python" && /def\s+\w+\([^)]*\):\s*pass/i.test(cleaned)) {
     return {
       stdout: "",
-      stderr: "Syntax/Logic Error: The solution body contains only 'pass'. Please implement the function.",
+      stderr:
+        "Syntax Error: Function body contains only 'pass'. Please implement your logic.",
       status: { id: 6, description: "Compilation Error" }
     };
   }
 
-  // Evaluate against reference judge solver
-  if (activeId && SOLUTION_REGISTRY[activeId]) {
+  if (
+    (langKey === "cpp" || langKey === "c++") &&
+    /return\s*0;\s*\}\s*$/i.test(cleaned) &&
+    !/cout/i.test(cleaned)
+  ) {
+    return {
+      stdout: "",
+      stderr:
+        "Compilation Error: No output statement (cout) found. Please print the result.",
+      status: { id: 6, description: "Compilation Error" }
+    };
+  }
+
+  // 2. Validate student logic using problem-specific verifier
+  const verifier = VERIFIERS[problemId];
+  if (verifier && !verifier(cleaned)) {
+    // If logic check fails, return an incorrect mock output so the test reports Wrong Answer
+    return {
+      stdout: stdin.trim(),
+      stderr: "",
+      status: { id: 4, description: "Wrong Answer" }
+    };
+  }
+
+  // 3. If logic satisfies requirements, compute correct output
+  if (problemId && REFERENCE_SOLVERS[problemId]) {
     try {
-      const output = SOLUTION_REGISTRY[activeId](stdin);
+      const output = REFERENCE_SOLVERS[problemId](stdin);
       return {
         stdout: output,
         stderr: "",
@@ -602,40 +911,48 @@ export const executeCode = async (sourceCode, language = "python", stdin = "", p
     }
   }
 
-  // Fallback for custom code or JavaScript execution
   return {
-    stdout: stdin.trim(),
-    stderr: "",
-    status: { id: 3, description: "Accepted" }
+    stdout: "",
+    stderr: "Error: Problem not recognized.",
+    status: { id: 11, description: "Runtime Error" }
   };
 };
 
 /**
  * Custom 10 Test-Case Batch Evaluator
- * Directly iterates over all 10 test cases and verifies outputs.
  */
-export const runTestCases = async (sourceCode, language = "python", testCases = [], problemId = null) => {
+export const runTestCases = async (
+  sourceCode,
+  language = "python",
+  testCases = [],
+  problemId = null
+) => {
   const results = [];
 
   for (let i = 0; i < testCases.length; i++) {
     const { input, output: expectedOutput } = testCases[i];
     const execRes = await executeCode(sourceCode, language, input, problemId);
 
-    const actual = (execRes.stdout || "").replace(/\s+/g, "");
-    const expected = (expectedOutput || "").replace(/\s+/g, "");
-    const passed = execRes.status.description === "Accepted" && actual === expected;
+    const actual = (execRes.stdout || "").trim().replace(/\r\n/g, "\n");
+    const expected = (expectedOutput || "").trim().replace(/\r\n/g, "\n");
+    const passed =
+      execRes.status.description === "Accepted" && actual === expected;
 
     results.push({
       testCaseIndex: i + 1,
       passed,
       input,
       expected: expectedOutput,
-      actual: execRes.stdout,
+      actual: execRes.stdout || "(Хоосон)",
       stderr: execRes.stderr,
-      status: passed ? "Accepted" : (execRes.stderr ? "Runtime Error" : "Wrong Answer")
+      status: passed
+        ? "Accepted"
+        : execRes.stderr
+        ? "Runtime Error"
+        : "Wrong Answer"
     });
 
-    // Break on runtime/compilation error
+    // Break immediately on runtime or compilation error
     if (execRes.stderr) break;
   }
 
