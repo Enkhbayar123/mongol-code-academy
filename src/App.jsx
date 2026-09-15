@@ -19,6 +19,7 @@ import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import MongolGPT from './pages/MongolGPT';
 import SupervisorDashboard from './pages/SupervisorDashboard'; // Added Supervisor Dashboard import
+import ExamTest1 from './pages/ExamTest1';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/supervisor-dashboard" element={<SupervisorDashboard />} /> {/* Added Supervisor Dashboard Route */}
+            <Route path="/exam/semester-1" element={<ExamTest1 />} />
           </Routes>
         </main>
         <Footer />

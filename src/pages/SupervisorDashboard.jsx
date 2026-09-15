@@ -5,11 +5,14 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import AddHomeworkModal from '../components/AddHomeworkModal';
 import { basicPracticeData } from '../data/basic-practice-data';
+import { exportGradesToExcel } from '../utils/gradeExporter';
 
 export default function SupervisorDashboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [students, setStudents] = useState([]);
   const [homeworks, setHomeworks] = useState([]);
+  const [examSubmissions, setExamSubmissions] = useState([]);
+  const [activeTab, setActiveTab] = useState('homework'); // 'homework' | 'exams'
   const [activeClass, setActiveClass] = useState(null); // null = Classes Overview, string = Selected Class Drilldown
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isHwModalOpen, setIsHwModalOpen] = useState(false);
@@ -23,7 +26,7 @@ export default function SupervisorDashboard() {
     return () => unsubscribe();
   }, []);
 
-  // Real-time Firestore sync
+  // Real-time Firestore sync for users, homeworks, and exam submissions
   useEffect(() => {
     const usersQuery = collection(db, 'users');
     const unsubscribeUsers = onSnapshot(
@@ -72,19 +75,32 @@ export default function SupervisorDashboard() {
       }
     );
 
+    const submissionsQuery = collection(db, 'exam_submissions');
+    const unsubscribeSubmissions = onSnapshot(
+      submissionsQuery,
+      (snapshot) => {
+        const subList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setExamSubmissions(subList);
+      },
+      (err) => {
+        console.error('Failed to fetch exam submissions:', err);
+      }
+    );
+
     return () => {
       unsubscribeUsers();
       unsubscribeHw();
+      unsubscribeSubmissions();
     };
   }, []);
 
-  // Compute assigned problem IDs for a class
-  const getAssignedHomeworkProblems = (studentClass) => {
-    const applicableHw = homeworks.filter(
-      (hw) => !hw.assignedClass || hw.assignedClass === 'all' || hw.assignedClass === studentClass
-    );
+  // All homework is unified across all classes
+  const getAssignedHomeworkProblems = () => {
     const problemIds = new Set();
-    applicableHw.forEach((hw) => {
+    homeworks.forEach((hw) => {
       (hw.problemIds || []).forEach((pid) => problemIds.add(pid));
     });
     return Array.from(problemIds);
@@ -92,7 +108,7 @@ export default function SupervisorDashboard() {
 
   // Compute individual student progress
   const calculateStudentProgress = (student) => {
-    const assignedIds = getAssignedHomeworkProblems(student.class);
+    const assignedIds = getAssignedHomeworkProblems();
     if (assignedIds.length === 0) return { percent: 100, completed: 0, total: 0 };
 
     const solvedList = student.solvedProblems || [];
@@ -104,6 +120,17 @@ export default function SupervisorDashboard() {
       completed: completedCount,
       total: assignedIds.length
     };
+  };
+
+  // Match exam submission for a student
+  const getStudentExam = (student) => {
+    return examSubmissions.find(
+      (sub) =>
+        sub.studentUid === student.id ||
+        sub.studentUid === student.uid ||
+        sub.id.includes(student.id) ||
+        (student.email && sub.studentEmail && sub.studentEmail.toLowerCase() === student.email.toLowerCase())
+    );
   };
 
   // Group students by class
@@ -123,6 +150,15 @@ export default function SupervisorDashboard() {
     if (!studentList || studentList.length === 0) return 0;
     const sum = studentList.reduce((acc, s) => acc + calculateStudentProgress(s).percent, 0);
     return Math.round(sum / studentList.length);
+  };
+
+  // Export to Excel handler
+  const handleExportSpreadsheet = () => {
+    if (!students.length) {
+      alert('Бүртгэлтэй сурагч олдсонгүй.');
+      return;
+    }
+    exportGradesToExcel(students, classGroups, calculateStudentProgress, getStudentExam);
   };
 
   return (
@@ -157,8 +193,8 @@ export default function SupervisorDashboard() {
             </h1>
             <p className="text-xs text-slate-400 mt-1">
               {activeClass
-                ? `${activeClass} ангийн сурагчдын даалгавар гүйцэтгэл ба дэлгэрэнгүй тайлан`
-                : 'Анги дээр дарж тухайн ангийн сурагчдын явцыг харна уу'}
+                ? `${activeClass} ангийн сурагчдын даалгаврын биелэлт болон шалгалтын оноо`
+                : 'Анги дээр дарж тухайн ангийн сурагчдын явц, шалгалтын дүнг харна уу'}
             </p>
           </div>
 
@@ -172,6 +208,16 @@ export default function SupervisorDashboard() {
               </button>
             )}
 
+            {/* Excel Export Button */}
+            <button
+              onClick={handleExportSpreadsheet}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center space-x-1.5"
+            >
+              <span>📊</span>
+              <span>Excel тайлан татах</span>
+            </button>
+
+            {/* Add Homework Button */}
             <button
               onClick={() => setIsHwModalOpen(true)}
               className="px-4 py-2.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center space-x-1.5"
@@ -182,8 +228,35 @@ export default function SupervisorDashboard() {
           </div>
         </div>
 
+        {/* Tab Controls */}
+        <div className="flex items-center space-x-2 border-b border-slate-800/80 pb-3">
+          <button
+            onClick={() => setActiveTab('homework')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeTab === 'homework'
+                ? 'bg-sky-600 text-white shadow'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            Гэрийн даалгавар
+          </button>
+          <button
+            onClick={() => setActiveTab('exams')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 ${
+              activeTab === 'exams'
+                ? 'bg-rose-600 text-white shadow'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            <span>1-р улирлын сорил</span>
+            <span className="px-2 py-0.5 rounded-full bg-black/30 text-[10px]">
+              {examSubmissions.length} шалгалт
+            </span>
+          </button>
+        </div>
+
         {/* Global Stats Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Нийт ангиуд</span>
             <p className="text-2xl font-black text-white mt-1">{sortedClassNames.length}</p>
@@ -195,6 +268,10 @@ export default function SupervisorDashboard() {
           <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Нийт даалгавар</span>
             <p className="text-2xl font-black text-sky-400 mt-1">{homeworks.length}</p>
+          </div>
+          <div className="p-5 rounded-2xl bg-[#0b1120] border border-slate-800/80">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Шалгалт өгсөн</span>
+            <p className="text-2xl font-black text-rose-400 mt-1">{examSubmissions.length}</p>
           </div>
         </div>
 
@@ -222,6 +299,7 @@ export default function SupervisorDashboard() {
                   const assignedHwCount = homeworks.filter(
                     (hw) => !hw.assignedClass || hw.assignedClass === 'all' || hw.assignedClass === className
                   ).length;
+                  const examsTakenCount = classStudents.filter((s) => getStudentExam(s)).length;
 
                   return (
                     <div
@@ -244,28 +322,57 @@ export default function SupervisorDashboard() {
                       </div>
 
                       <div className="space-y-2 pt-4 border-t border-slate-800/60">
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-slate-400">Дундаж биелэлт:</span>
-                          <span className={avgPercent >= 80 ? 'text-emerald-400' : 'text-sky-400'}>
-                            {avgPercent}%
-                          </span>
-                        </div>
+                        {activeTab === 'homework' ? (
+                          <>
+                            <div className="flex justify-between text-xs font-semibold">
+                              <span className="text-slate-400">Дундаж биелэлт:</span>
+                              <span className={avgPercent >= 80 ? 'text-emerald-400' : 'text-sky-400'}>
+                                {avgPercent}%
+                              </span>
+                            </div>
 
-                        <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-                          <div
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              avgPercent >= 80 ? 'bg-emerald-500' : 'bg-sky-500'
-                            }`}
-                            style={{ width: `${avgPercent}%` }}
-                          />
-                        </div>
+                            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  avgPercent >= 80 ? 'bg-emerald-500' : 'bg-sky-500'
+                                }`}
+                                style={{ width: `${avgPercent}%` }}
+                              />
+                            </div>
 
-                        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-                          <span>Оноосон даалгавар: {assignedHwCount}</span>
-                          <span className="text-sky-400 font-semibold group-hover:underline">
-                            Нээж үзэх &rarr;
-                          </span>
-                        </div>
+                            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                              <span>Оноосон даалгавар: {assignedHwCount}</span>
+                              <span className="text-sky-400 font-semibold group-hover:underline">
+                                Нээж үзэх &rarr;
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex justify-between text-xs font-semibold">
+                              <span className="text-slate-400">Шалгалт өгсөн явц:</span>
+                              <span className={examsTakenCount === classStudents.length ? 'text-emerald-400' : 'text-rose-400'}>
+                                {examsTakenCount} / {classStudents.length}
+                              </span>
+                            </div>
+
+                            <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                              <div
+                                className="h-full rounded-full bg-rose-500 transition-all duration-500"
+                                style={{
+                                  width: `${classStudents.length ? (examsTakenCount / classStudents.length) * 100 : 0}%`
+                                }}
+                              />
+                            </div>
+
+                            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
+                              <span>Сорилын дүнг харах</span>
+                              <span className="text-rose-400 font-semibold group-hover:underline">
+                                Нээж үзэх &rarr;
+                              </span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   );
@@ -293,6 +400,7 @@ export default function SupervisorDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {(classGroups[activeClass] || []).map((student) => {
                 const { percent, completed, total } = calculateStudentProgress(student);
+                const exam = getStudentExam(student);
 
                 return (
                   <div
@@ -305,9 +413,21 @@ export default function SupervisorDashboard() {
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/30">
                           {student.class} анги
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                          @tegshuhaan
-                        </span>
+                        {activeTab === 'exams' ? (
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                              exam
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                            }`}
+                          >
+                            {exam ? 'Өгсөн' : 'Өгөөгүй'}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            @tegshuhaan
+                          </span>
+                        )}
                       </div>
 
                       <h3 className="text-base font-bold text-white group-hover:text-sky-300 transition-colors">
@@ -316,39 +436,52 @@ export default function SupervisorDashboard() {
                       <p className="text-xs text-slate-400 truncate mt-0.5">{student.email}</p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-slate-800/60">
-                      <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-400">Даалгаврын гүйцэтгэл:</span>
-                        <span
-                          className={
-                            percent === 100
-                              ? 'text-emerald-400 font-bold'
-                              : percent >= 50
-                              ? 'text-sky-400'
-                              : 'text-amber-400'
-                          }
-                        >
-                          {percent}% ({completed}/{total})
-                        </span>
-                      </div>
+                    {activeTab === 'homework' ? (
+                      <div className="space-y-2 pt-2 border-t border-slate-800/60">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-slate-400">Даалгаврын гүйцэтгэл:</span>
+                          <span
+                            className={
+                              percent === 100
+                                ? 'text-emerald-400 font-bold'
+                                : percent >= 50
+                                ? 'text-sky-400'
+                                : 'text-amber-400'
+                            }
+                          >
+                            {percent}% ({completed}/{total})
+                          </span>
+                        </div>
 
-                      <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            percent === 100
-                              ? 'bg-emerald-500'
-                              : percent >= 50
-                              ? 'bg-sky-500'
-                              : 'bg-amber-500'
-                          }`}
-                          style={{ width: `${percent}%` }}
-                        />
+                        <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              percent === 100
+                                ? 'bg-emerald-500'
+                                : percent >= 50
+                                ? 'bg-sky-500'
+                                : 'bg-amber-500'
+                            }`}
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
                       </div>
+                    ) : (
+                      <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between">
+                        <span className="text-xs text-slate-400">Сорилын оноо:</span>
+                        {exam ? (
+                          <span className="text-xs font-black text-emerald-400 bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-800/50">
+                            {exam.score} / {exam.maxScore || 5} ({Math.round(((exam.score || 0) / (exam.maxScore || 5)) * 100)}%)
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-500 font-semibold">Илгээгээгүй</span>
+                        )}
+                      </div>
+                    )}
 
-                      <div className="flex justify-between items-center text-[11px] text-slate-500 pt-1">
-                        <span>Нийт бодсон: {(student.solvedProblems || []).length}</span>
-                        <span className="text-sky-400 font-semibold group-hover:underline">Дэлгэрэнгүй &rarr;</span>
-                      </div>
+                    <div className="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                      <span>Нийт бодсон: {(student.solvedProblems || []).length}</span>
+                      <span className="text-sky-400 font-semibold group-hover:underline">Дэлгэрэнгүй &rarr;</span>
                     </div>
                   </div>
                 );
@@ -382,6 +515,49 @@ export default function SupervisorDashboard() {
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {/* 1. Exam Performance Card */}
+                {(() => {
+                  const exam = getStudentExam(selectedStudent);
+                  return (
+                    <div className="p-4 rounded-xl bg-[#070d19] border border-slate-800 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">
+                          1-р улирлын сорилын үр дүн
+                        </span>
+                        {exam ? (
+                          <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            Хураагдсан
+                          </span>
+                        ) : (
+                          <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                            Өгөөгүй
+                          </span>
+                        )}
+                      </div>
+
+                      {exam ? (
+                        <div className="grid grid-cols-2 gap-3 pt-2">
+                          <div className="bg-[#050913] p-3 rounded-lg border border-slate-800">
+                            <span className="text-[11px] text-slate-400 block">Бодсон тоо</span>
+                            <span className="text-xl font-extrabold text-emerald-400">
+                              {exam.score} / {exam.maxScore || 5}
+                            </span>
+                          </div>
+                          <div className="bg-[#050913] p-3 rounded-lg border border-slate-800">
+                            <span className="text-[11px] text-slate-400 block">Амжилт</span>
+                            <span className="text-xl font-extrabold text-sky-400">
+                              {Math.round(((exam.score || 0) / (exam.maxScore || 5)) * 100)}%
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-slate-500">Сурагч сорилын хариуг хараахан илгээгээгүй байна.</p>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* 2. Homework Overview Stats */}
                 {(() => {
                   const { percent, completed, total } = calculateStudentProgress(selectedStudent);
                   return (
@@ -402,10 +578,11 @@ export default function SupervisorDashboard() {
                   );
                 })()}
 
+                {/* 3. Assigned Homework Breakdown */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-bold text-white">Оноосон даалгаврууд ({selectedStudent.class} анги)</h3>
                   {(() => {
-                    const assignedIds = getAssignedHomeworkProblems(selectedStudent.class);
+                    const assignedIds = getAssignedHomeworkProblems();
                     if (assignedIds.length === 0) {
                       return <p className="text-xs text-slate-500">Одоогоор энэ ангид даалгавар оноогоогүй байна.</p>;
                     }
@@ -449,6 +626,7 @@ export default function SupervisorDashboard() {
                   })()}
                 </div>
 
+                {/* 4. All Solved Problems List */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-bold text-white">
                     Бүх бодсон бодлогууд ({(selectedStudent.solvedProblems || []).length})
