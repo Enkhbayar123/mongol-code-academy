@@ -87,7 +87,10 @@ const VERIFIERS = {
   "bp-13": (code) => (/for|while/.test(code) && /\+/.test(code)) || /\*\s*\(\s*\w+\s*\+\s*1\s*\)\s*\/\s*2/.test(code),
   "bp-14": (code) => (/for|while/.test(code) && /\*/.test(code)),
   "bp-15": (code) => /pow\s*\(\s*2\s*,/.test(code) || /1\s*<<\s*\w+/.test(code) || (/for|while/.test(code) && /\*\s*=\s*2/.test(code)),
-
+  "bp-17": (code) => /cin\s*>>/.test(code) && /\+/.test(code),
+  "bp-18": (code) => /cin\s*>>/.test(code) && /\*/.test(code) && /\+/.test(code),
+  "bp-19": (code) => /cin\s*>>/.test(code) && /4\s*\*/.test(code) && /3\s*\*/.test(code) && /\+/.test(code),
+  "bp-20": (code) => /cin\s*>>/.test(code) && /\/\s*60/.test(code) && /%\s*60/.test(code),
   // ==========================================
   // --- Main Problems (C++) ---
   // ==========================================
@@ -222,6 +225,24 @@ const REFERENCE_SOLVERS = {
   "bp-15": (stdin) => {
     const n = Number(stdin.trim());
     return String(2 ** n);
+  },
+  "bp-17": (stdin) => {
+    const [a, b] = stdin.trim().split(/\s+/).map(Number);
+    return String(a + b);
+  },
+  "bp-18": (stdin) => {
+    const [a, b] = stdin.trim().split(/\s+/).map(Number);
+    return `${a * b} ${2 * (a + b)}`;
+  },
+  "bp-19": (stdin) => {
+    const x = Number(stdin.trim());
+    return String(4 * x * x - 3 * x + 5);
+  },
+  "bp-20": (stdin) => {
+    const sec = Number(stdin.trim());
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m} ${s}`;
   },
 
   // ==========================================

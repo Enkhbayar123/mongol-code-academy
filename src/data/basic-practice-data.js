@@ -607,6 +607,166 @@ if line:
     description: `
       <p>Spoj - ын 1 - р хуудсан дээрх бүх бодлогыг нэгтгэн бодсон бичлэг</p>`, 
     spojLink: 'https://www.spoj.com/RGB7/problems/main/'
+  },
+  { 
+    id: 'bp-17', 
+    name: '2 тооны нийлбэр', 
+    videoId: 'Z7SVyuQX584', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн бүхэл тооны нийлбэрийг ол.</p>
+      <h4>Input</h4>
+      <p>2 бүхэл тоо зайгаар тусгаарлагдан нэг мөрөнд өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>2 тооны нийлбэр.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+12 23
+
+Output:
+35</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7001/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    a, b = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "12 23", output: "35" },
+      { input: "0 0", output: "0" },
+      { input: "100 200", output: "300" },
+      { input: "-5 5", output: "0" },
+      { input: "-10 -20", output: "-30" },
+      { input: "7 8", output: "15" },
+      { input: "99 1", output: "100" },
+      { input: "1234 5678", output: "6912" },
+      { input: "-50 20", output: "-30" },
+      { input: "42 58", output: "100" }
+    ]
+  },
+  { 
+    id: 'bp-18', 
+    name: 'Тэгш өнцөгт', 
+    videoId: 'PVDxf8Z5zzg', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн тэгш өнцөгтийн талбай ба периметрийг ол.</p>
+      <h4>Input</h4>
+      <p>Тэгш өнцөгтийн урт ба өргөн нь бүхэл тоон утгаар нэг мөрөнд зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Талбай ба периметр зайгаар тусгаарлагдан нэг мөрөнд хэвлэгдэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+6 4
+
+Output:
+24 20</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7003/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    a, b = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "6 4", output: "24 20" },
+      { input: "1 1", output: "1 4" },
+      { input: "5 10", output: "50 30" },
+      { input: "3 7", output: "21 20" },
+      { input: "10 10", output: "100 40" },
+      { input: "2 8", output: "16 20" },
+      { input: "12 5", output: "60 34" },
+      { input: "15 20", output: "300 70" },
+      { input: "9 3", output: "27 24" },
+      { input: "100 50", output: "5000 300" }
+    ]
+  },
+  { 
+    id: 'bp-19', 
+    name: 'Функц 2', 
+    videoId: 'r2F95nDG0XY', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>y = 4x^2 - 3x + 5</p>
+      <h4>Input</h4>
+      <p>x - нь Int төрлийн бүхэл тоо.</p>
+      <h4>Output</h4>
+      <p>y-гийн утга.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+-2
+
+Output:
+27</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7006/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    x = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "-2", output: "27" },
+      { input: "0", output: "5" },
+      { input: "1", output: "6" },
+      { input: "2", output: "15" },
+      { input: "3", output: "32" },
+      { input: "-1", output: "12" },
+      { input: "-3", output: "50" },
+      { input: "5", output: "90" },
+      { input: "10", output: "375" },
+      { input: "-5", output: "120" }
+    ]
+  },
+  { 
+    id: 'bp-20', 
+    name: 'Минут секунд', 
+    videoId: 'y5S765vTIAM', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн секундыг минут секунд болго.</p>
+      <h4>Input</h4>
+      <p>Секунд Int тоон утгаар өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Минут секундыг зайгаар тусгаарлан хэвлэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+200
+
+Output:
+3 20</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7011/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    sec = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "200", output: "3 20" },
+      { input: "60", output: "1 0" },
+      { input: "59", output: "0 59" },
+      { input: "0", output: "0 0" },
+      { input: "3600", output: "60 0" },
+      { input: "125", output: "2 5" },
+      { input: "500", output: "8 20" },
+      { input: "1000", output: "16 40" },
+      { input: "45", output: "0 45" },
+      { input: "85", output: "1 25" }
+    ]
   }
 ];
 
