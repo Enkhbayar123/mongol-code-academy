@@ -91,6 +91,14 @@ const VERIFIERS = {
   "bp-18": (code) => /cin\s*>>/.test(code) && /\*/.test(code) && /\+/.test(code),
   "bp-19": (code) => /cin\s*>>/.test(code) && /4\s*\*/.test(code) && /3\s*\*/.test(code) && /\+/.test(code),
   "bp-20": (code) => /cin\s*>>/.test(code) && /\/\s*60/.test(code) && /%\s*60/.test(code),
+  "bp-21": (code) => /cin\s*>>/.test(code) && /\*\s*60/.test(code) && /\+/.test(code),
+  "bp-22": (code) => /cin\s*>>/.test(code) && (/\*\s*3600/.test(code) || /\*\s*60/.test(code)) && /\+/.test(code),
+  "bp-23": (code) => /cin\s*>>/.test(code) && /\/\s*24/.test(code) && /%\s*24/.test(code),
+  "bp-24": (code) => /cin\s*>>/.test(code) && /\*\s*24/.test(code) && /\+/.test(code),
+  "bp-25": (code) => /cin\s*>>/.test(code) && /\*\s*12/.test(code) && /\+/.test(code),
+  "bp-26": (code) => /cin\s*>>/.test(code) && /\/\s*3600/.test(code) && /\/\s*60/.test(code),
+  "bp-27": (code) => /cin\s*>>/.test(code) && !/if\s*\(/.test(code),
+  "bp-28": (code) => /cin\s*>>/.test(code) && !/if\s*\(|\?.*:/.test(code),
   // ==========================================
   // --- Main Problems (C++) ---
   // ==========================================
@@ -244,6 +252,53 @@ const REFERENCE_SOLVERS = {
     const s = sec % 60;
     return `${m} ${s}`;
   },
+  "bp-21": (stdin) => {
+    const [m, s] = stdin.trim().split(/\s+/).map(Number);
+    return String(m * 60 + s);
+  },
+  "bp-22": (stdin) => {
+    const [h, m, s] = stdin.trim().split(/\s+/).map(Number);
+    return String(h * 3600 + m * 60 + s);
+  },
+  "bp-23": (stdin) => {
+    const h = Number(stdin.trim());
+    const days = Math.floor(h / 24);
+    const hours = h % 24;
+    return `${days} ${hours}`;
+  },
+  "bp-24": (stdin) => {
+    const [d, h] = stdin.trim().split(/\s+/).map(Number);
+    return String(d * 24 + h);
+  },
+  "bp-25": (stdin) => {
+    const [y, m] = stdin.trim().split(/\s+/).map(Number);
+    return String(y * 12 + m);
+  },
+  "bp-26": (stdin) => {
+    const totalSec = Number(stdin.trim());
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${h} ${m} ${s}`;
+  },
+  "bp-27": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(Math.max(...nums));
+  },
+  "bp-28": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    const maxVal = Math.max(...nums);
+    let found = false;
+    const res = nums.map((x) => {
+      if (x === maxVal && !found) {
+        found = true;
+        return x;
+      }
+      return 0;
+    });
+    return res.join(" ");
+  },
+
 
   // ==========================================
   // --- Main Problems Solvers ---

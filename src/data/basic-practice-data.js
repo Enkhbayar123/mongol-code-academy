@@ -767,6 +767,326 @@ if line:
       { input: "45", output: "0 45" },
       { input: "85", output: "1 25" }
     ]
+  },
+  { 
+    id: 'bp-21', 
+    name: 'Минут секунд -> секунд', 
+    videoId: 'YvCVoBBXIP0', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн минут, секундыг секунд рүү шилжүүл.</p>
+      <h4>Input</h4>
+      <p>Минут, секунд зайгаар тусгаарлагдан Int төрлөөр өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Секунд гарна.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3 4
+
+Output:
+184</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7013/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    m, s = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "3 4", output: "184" },
+      { input: "1 0", output: "60" },
+      { input: "0 45", output: "45" },
+      { input: "10 15", output: "615" },
+      { input: "0 0", output: "0" },
+      { input: "5 30", output: "330" },
+      { input: "60 0", output: "3600" },
+      { input: "2 5", output: "125" },
+      { input: "8 20", output: "500" },
+      { input: "16 40", output: "1000" }
+    ]
+  },
+  { 
+    id: 'bp-22', 
+    name: 'Цаг, минут, секунд -> секунд', 
+    videoId: 'V6lpKfoeXhg', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн цаг, минут, секундыг секунд рүү шилжүүл.</p>
+      <h4>Input</h4>
+      <p>Цаг, минут, секунд зайгаар тусгаарлагдан нэг мөрөнд Int төрлөөр өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Секунд гарна.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+1 2 3
+
+Output:
+3723</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7014/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    h, m, s = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "1 2 3", output: "3723" },
+      { input: "0 0 0", output: "0" },
+      { input: "1 0 0", output: "3600" },
+      { input: "0 1 0", output: "60" },
+      { input: "0 0 1", output: "1" },
+      { input: "2 30 15", output: "9015" },
+      { input: "10 0 0", output: "36000" },
+      { input: "5 12 45", output: "18765" },
+      { input: "12 0 0", output: "43200" },
+      { input: "24 0 0", output: "86400" }
+    ]
+  },
+  { 
+    id: 'bp-23', 
+    name: 'Хоног цаг', 
+    videoId: 'F6XR5wVaXdM', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн цагийг хоног цагт шилжүүл.</p>
+      <h4>Input</h4>
+      <p>Цаг Int төрлөөр өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Хоног, цаг нэг мөрөнд зайгаар тусгаарлагдан хэвлэгдэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+44
+
+Output:
+1 20</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7015/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    h = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "44", output: "1 20" },
+      { input: "24", output: "1 0" },
+      { input: "12", output: "0 12" },
+      { input: "0", output: "0 0" },
+      { input: "48", output: "2 0" },
+      { input: "50", output: "2 2" },
+      { input: "100", output: "4 4" },
+      { input: "23", output: "0 23" },
+      { input: "25", output: "1 1" },
+      { input: "72", output: "3 0" }
+    ]
+  },
+  { 
+    id: 'bp-24', 
+    name: 'Хоног цаг -> цаг', 
+    videoId: '15Qkhm0TDIE', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн хоног, цагийг цагт шилжүүл.</p>
+      <h4>Input</h4>
+      <p>Хоног, цаг Int төрлөөр нэг зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Цаг гарна.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+2 5
+
+Output:
+53</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7016/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    d, h = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "2 5", output: "53" },
+      { input: "1 0", output: "24" },
+      { input: "0 12", output: "12" },
+      { input: "0 0", output: "0" },
+      { input: "1 20", output: "44" },
+      { input: "2 0", output: "48" },
+      { input: "4 4", output: "100" },
+      { input: "10 0", output: "240" },
+      { input: "3 12", output: "84" },
+      { input: "5 5", output: "125" }
+    ]
+  },
+  { 
+    id: 'bp-25', 
+    name: 'Жил сар -> сар', 
+    videoId: 'SO907v9FXgc', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн жил, сарыг сард шилжүүл.</p>
+      <h4>Input</h4>
+      <p>Жил, сар нэг мөрөнд зайгаар тусгаарлагдан Int төрлөөр өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Сар хэвлэгдэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+2 7
+
+Output:
+31</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7018/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    y, m = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "2 7", output: "31" },
+      { input: "1 0", output: "12" },
+      { input: "0 6", output: "6" },
+      { input: "0 0", output: "0" },
+      { input: "5 2", output: "62" },
+      { input: "10 0", output: "120" },
+      { input: "3 11", output: "47" },
+      { input: "1 5", output: "17" },
+      { input: "4 8", output: "56" },
+      { input: "12 0", output: "144" }
+    ]
+  },
+  { 
+    id: 'bp-26', 
+    name: 'Цаг минут секунд', 
+    videoId: 'sT1ZaOzn_MY', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн секундыг цаг минут секунд болго.</p>
+      <h4>Input</h4>
+      <p>Секунд Int төрлийн тоон утгаар өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Цаг, минут, секундууд хоорондоо 1 зайгаар тусгаарлагдан хэвлэгдэнэ. Цаг минут руу шилжихгүй бол 0 хэвлэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3612
+
+Output:
+1 0 12</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7012/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    sec = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "3612", output: "1 0 12" },
+      { input: "3600", output: "1 0 0" },
+      { input: "60", output: "0 1 0" },
+      { input: "45", output: "0 0 45" },
+      { input: "0", output: "0 0 0" },
+      { input: "3723", output: "1 2 3" },
+      { input: "9015", output: "2 30 15" },
+      { input: "86400", output: "24 0 0" },
+      { input: "18765", output: "5 12 45" },
+      { input: "500", output: "0 8 20" }
+    ]
+  },
+  { 
+    id: 'bp-27', 
+    name: 'Нэмэлт сонирхолтой бодлого (Max without IF)', 
+    videoId: 'auv6Am8KAQk', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>4 бүхэл тоо өгөгдөнө. Тэдний хамгийн ихийг нь <code>if</code> нөхцөл ашиглахгүй олох.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд 4 бүхэл тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Хамгийн их тоо.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+1 2 3 4
+
+Output:
+4</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/KHLDH_qCfNA/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here (Without using if statements)
+    `,
+    testCases: [
+      { input: "1 2 3 4", output: "4" },
+      { input: "10 5 8 2", output: "10" },
+      { input: "-1 -5 -2 -10", output: "-1" },
+      { input: "0 0 0 0", output: "0" },
+      { input: "100 200 150 50", output: "200" },
+      { input: "7 7 7 7", output: "7" },
+      { input: "9 1 3 5", output: "9" },
+      { input: "-10 0 10 -20", output: "10" },
+      { input: "15 80 80 12", output: "80" },
+      { input: "42 17 99 3", output: "99" }
+    ]
+  },
+  { 
+    id: 'bp-28', 
+    name: 'Ихээс бусдыг тэг болго (Without IF)', 
+    videoId: 'I1-81CAe0a4', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>4 бүхэл тоо өгөгдөнө. Тэдний ихээс бусдыг <code>if</code> нөхцөл ашиглахгүйгээр тэг болго.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд 4 бүхэл тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Ихээс бусад тоонуудыг 0 болгон нэг мөрөнд зайгаар тусгаарлан хэвлэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+12 13 14 15
+
+Output:
+0 0 0 15</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7104/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here (Without using if statements)
+    `,
+    testCases: [
+      { input: "12 13 14 15", output: "0 0 0 15" },
+      { input: "10 5 8 2", output: "10 0 0 0" },
+      { input: "1 20 3 4", output: "0 20 0 0" },
+      { input: "5 5 10 2", output: "0 0 10 0" },
+      { input: "100 20 30 40", output: "100 0 0 0" },
+      { input: "1 2 9 4", output: "0 0 9 0" },
+      { input: "-10 -5 -1 -20", output: "0 0 -1 0" },
+      { input: "0 0 5 0", output: "0 0 5 0" },
+      { input: "7 14 21 28", output: "0 0 0 28" },
+      { input: "50 40 30 20", output: "50 0 0 0" }
+    ]
   }
 ];
 
