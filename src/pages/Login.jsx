@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 import { useLanguage } from '../context/LanguageContext';
 
 const Login = () => {
@@ -27,8 +28,19 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      navigate('/');
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      // Fetch user profile from Firestore to check password change flag
+      const userDocRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userDocRef);
+
+      if (userSnap.exists() && userSnap.data().mustChangePassword) {
+        // Redirect user to password change page if flag is true
+        navigate('/change-password');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       console.error(err);
       let message = t('err_login_general');

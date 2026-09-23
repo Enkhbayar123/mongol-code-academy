@@ -46,13 +46,17 @@ const Register = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
+      // Determine if password renewal is required on first login
+      const isTegshUhaanUser = formData.isTegshUhaan === 'Yes' || formData.email.toLowerCase().endsWith('@tegshuhaan.mn');
+
       await setDoc(doc(db, "users", user.uid), {
         fullName: formData.fullName,
         email: formData.email,
         age: formData.age ? parseInt(formData.age) : null,
         country: formData.country,
         programmingExperience: formData.experience,
-        isTegshUhaan: formData.isTegshUhaan === 'Yes', // Stored in Firestore as boolean
+        isTegshUhaan: isTegshUhaanUser, // Stored in Firestore as boolean
+        mustChangePassword: isTegshUhaanUser, // Force password change flag
         reasonForJoining: formData.reason,
         createdAt: new Date()
       });
