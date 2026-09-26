@@ -1087,6 +1087,166 @@ if line:
       { input: "7 14 21 28", output: "0 0 0 28" },
       { input: "50 40 30 20", output: "50 0 0 0" }
     ]
+  },
+  { 
+    id: 'bp-29', 
+    name: '2 оронтой тоо', 
+    videoId: 'BiIJ982HjxA', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 2 оронтой тооны цифрүүдийн нийлбэрийг ол.</p>
+      <h4>Input</h4>
+      <p>2 оронтой эерэг бүхэл тоо өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Цифрүүдийн нийлбэр.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+27
+
+Output:
+9</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7009/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    n = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "27", output: "9" },
+      { input: "10", output: "1" },
+      { input: "99", output: "18" },
+      { input: "55", output: "10" },
+      { input: "42", output: "6" },
+      { input: "80", output: "8" },
+      { input: "11", output: "2" },
+      { input: "63", output: "9" },
+      { input: "74", output: "11" },
+      { input: "38", output: "11" }
+    ]
+  },
+  { 
+    id: 'bp-30', 
+    name: 'Минут секунд (Модуло үйлдэл)', 
+    videoId: 'ZHs8XnycUjs', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн секундыг минут секунд болго. (Модуло үйлдэл ашиглах)</p>
+      <h4>Input</h4>
+      <p>Секунд Int тоон утгаар өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Минут секундыг зайгаар тусгаарлан хэвлэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+200
+
+Output:
+3 20</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7011/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    sec = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "200", output: "3 20" },
+      { input: "60", output: "1 0" },
+      { input: "59", output: "0 59" },
+      { input: "0", output: "0 0" },
+      { input: "3600", output: "60 0" },
+      { input: "125", output: "2 5" },
+      { input: "500", output: "8 20" },
+      { input: "1000", output: "16 40" },
+      { input: "45", output: "0 45" },
+      { input: "85", output: "1 25" }
+    ]
+  },
+  { 
+    id: 'bp-31', 
+    name: 'Хоног цаг (Модуло үйлдэл)', 
+    videoId: 'JW798c6W8Gc', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн цагийг хоног ба цаг болгон хувирга.</p>
+      <h4>Input</h4>
+      <p>Цаг Int тоон утгаар өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Хоног ба цагийг зайгаар тусгаарлан хэвлэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+27
+
+Output:
+1 3</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7015/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    hours = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "27", output: "1 3" },
+      { input: "24", output: "1 0" },
+      { input: "48", output: "2 0" },
+      { input: "50", output: "2 2" },
+      { input: "12", output: "0 12" },
+      { input: "0", output: "0 0" },
+      { input: "100", output: "4 4" },
+      { input: "73", output: "3 1" },
+      { input: "15", output: "0 15" },
+      { input: "500", output: "20 20" }
+    ]
+  },
+  { 
+    id: 'bp-32', 
+    name: 'Жил сар (Модуло үйлдэл)', 
+    videoId: 'KGIYmBUy1gA', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн сарыг жил ба сар болгон хувирга.</p>
+      <h4>Input</h4>
+      <p>Сар Int тоон утгаар өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Жил ба сарыг зайгаар тусгаарлан хэвлэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+27
+
+Output:
+2 3</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7017/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    months = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "27", output: "2 3" },
+      { input: "12", output: "1 0" },
+      { input: "24", output: "2 0" },
+      { input: "5", output: "0 5" },
+      { input: "0", output: "0 0" },
+      { input: "35", output: "2 11" },
+      { input: "100", output: "8 4" },
+      { input: "13", output: "1 1" },
+      { input: "50", output: "4 2" },
+      { input: "120", output: "10 0" }
+    ]
   }
 ];
 

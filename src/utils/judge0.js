@@ -99,6 +99,10 @@ const VERIFIERS = {
   "bp-26": (code) => /cin\s*>>/.test(code) && /\/\s*3600/.test(code) && /\/\s*60/.test(code),
   "bp-27": (code) => /cin\s*>>/.test(code) && !/if\s*\(/.test(code),
   "bp-28": (code) => /cin\s*>>/.test(code) && !/if\s*\(|\?.*:/.test(code),
+  "bp-29": (code) => /cin\s*>>/.test(code) && (/\/\s*10/.test(code) || /%\s*10/.test(code)),
+  "bp-30": (code) => /cin\s*>>/.test(code) && /\/\s*60/.test(code) && /%\s*60/.test(code),
+  "bp-31": (code) => /cin\s*>>/.test(code) && /\/\s*24/.test(code) && /%\s*24/.test(code),
+  "bp-32": (code) => /cin\s*>>/.test(code) && /\/\s*12/.test(code) && /%\s*12/.test(code),
   // ==========================================
   // --- Main Problems (C++) ---
   // ==========================================
@@ -297,6 +301,22 @@ const REFERENCE_SOLVERS = {
       return 0;
     });
     return res.join(" ");
+  },
+  "bp-29": (stdin) => {
+    const n = Math.abs(Number(stdin.trim()));
+    return String(Math.floor(n / 10) + (n % 10));
+  },
+  "bp-30": (stdin) => {
+    const sec = Number(stdin.trim());
+    return `${Math.floor(sec / 60)} ${sec % 60}`;
+  },
+  "bp-31": (stdin) => {
+    const hours = Number(stdin.trim());
+    return `${Math.floor(hours / 24)} ${hours % 24}`;
+  },
+  "bp-32": (stdin) => {
+    const months = Number(stdin.trim());
+    return `${Math.floor(months / 12)} ${months % 12}`;
   },
 
 
