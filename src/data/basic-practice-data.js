@@ -1094,17 +1094,17 @@ if line:
     videoId: 'BiIJ982HjxA', 
     description: `
       <h4>Бодлогын тодорхойлолт</h4>
-      <p>Өгөгдсөн 2 оронтой тооны цифрүүдийн нийлбэрийг ол.</p>
+      <p>Өгөгдсөн 2 оронтой тооны цифрүүдийн үржвэрийг ол.</p>
       <h4>Input</h4>
-      <p>2 оронтой эерэг бүхэл тоо өгөгдөнө.</p>
+      <p>2 оронтой тоо өгөгдөнө.</p>
       <h4>Output</h4>
-      <p>Цифрүүдийн нийлбэр.</p>
+      <p>Нэгж ба аравтын орны цифрүүдийн үржвэр.</p>
       <h4>Example</h4>
       <pre><code>Input:
 27
 
 Output:
-9</code></pre>`, 
+14</code></pre>`, 
     spojLink: 'https://www.spoj.com/RGB7/problems/RGB7009/',
     defaultLanguage: "python",
     starterCode: `import sys
@@ -1116,16 +1116,16 @@ if line:
     # Write your code here
     `,
     testCases: [
-      { input: "27", output: "9" },
-      { input: "10", output: "1" },
-      { input: "99", output: "18" },
-      { input: "55", output: "10" },
-      { input: "42", output: "6" },
-      { input: "80", output: "8" },
-      { input: "11", output: "2" },
-      { input: "63", output: "9" },
-      { input: "74", output: "11" },
-      { input: "38", output: "11" }
+      { input: "27", output: "14" },
+      { input: "10", output: "0" },
+      { input: "99", output: "81" },
+      { input: "55", output: "25" },
+      { input: "42", output: "8" },
+      { input: "80", output: "0" },
+      { input: "11", output: "1" },
+      { input: "63", output: "18" },
+      { input: "74", output: "28" },
+      { input: "38", output: "24" }
     ]
   },
   { 
@@ -1134,7 +1134,7 @@ if line:
     videoId: 'ZHs8XnycUjs', 
     description: `
       <h4>Бодлогын тодорхойлолт</h4>
-      <p>Өгөгдсөн секундыг минут секунд болго. (Модуло үйлдэл ашиглах)</p>
+      <p>Өгөгдсөн секундыг минут секунд болго.</p>
       <h4>Input</h4>
       <p>Секунд Int тоон утгаар өгөгдөнө.</p>
       <h4>Output</h4>
@@ -1174,17 +1174,17 @@ if line:
     videoId: 'JW798c6W8Gc', 
     description: `
       <h4>Бодлогын тодорхойлолт</h4>
-      <p>Өгөгдсөн цагийг хоног ба цаг болгон хувирга.</p>
+      <p>Өгөгдсөн цагийг хоног цагт шилжүүл.</p>
       <h4>Input</h4>
-      <p>Цаг Int тоон утгаар өгөгдөнө.</p>
+      <p>Цаг Int төрлөөр өгөгдөнө.</p>
       <h4>Output</h4>
-      <p>Хоног ба цагийг зайгаар тусгаарлан хэвлэ.</p>
+      <p>Хоног, цаг нэг мөрөнд зайгаар тусгаарлагдан хэвлэгдэнэ.</p>
       <h4>Example</h4>
       <pre><code>Input:
-27
+44
 
 Output:
-1 3</code></pre>`, 
+1 20</code></pre>`, 
     spojLink: 'https://www.spoj.com/RGB7/problems/RGB7015/',
     defaultLanguage: "python",
     starterCode: `import sys
@@ -1196,6 +1196,7 @@ if line:
     # Write your code here
     `,
     testCases: [
+      { input: "44", output: "1 20" },
       { input: "27", output: "1 3" },
       { input: "24", output: "1 0" },
       { input: "48", output: "2 0" },
@@ -1204,7 +1205,6 @@ if line:
       { input: "0", output: "0 0" },
       { input: "100", output: "4 4" },
       { input: "73", output: "3 1" },
-      { input: "15", output: "0 15" },
       { input: "500", output: "20 20" }
     ]
   },
@@ -1214,11 +1214,11 @@ if line:
     videoId: 'KGIYmBUy1gA', 
     description: `
       <h4>Бодлогын тодорхойлолт</h4>
-      <p>Өгөгдсөн сарыг жил ба сар болгон хувирга.</p>
+      <p>Өгөгдсөн сарыг жил сар руу шилжүүл.</p>
       <h4>Input</h4>
-      <p>Сар Int тоон утгаар өгөгдөнө.</p>
+      <p>Сар Int төрлөөр өгөгдөнө.</p>
       <h4>Output</h4>
-      <p>Жил ба сарыг зайгаар тусгаарлан хэвлэ.</p>
+      <p>Жил сарыг нэг мөрөнд зайгаар тусгаарлан хэвлэ.</p>
       <h4>Example</h4>
       <pre><code>Input:
 27
