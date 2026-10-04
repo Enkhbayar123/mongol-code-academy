@@ -103,6 +103,11 @@ const VERIFIERS = {
   "bp-30": (code) => /cin\s*>>/.test(code) && /\/\s*60/.test(code) && /%\s*60/.test(code),
   "bp-31": (code) => /cin\s*>>/.test(code) && /\/\s*24/.test(code) && /%\s*24/.test(code),
   "bp-32": (code) => /cin\s*>>/.test(code) && /\/\s*12/.test(code) && /%\s*12/.test(code),
+  "bp-33": (code) => /min\s*\(/.test(code) || /if\s*\(?.*[><]/.test(code) || /\?.*:/.test(code),
+  "bp-34": (code) => /min\s*\(/.test(code) || /if\s*\(?.*[><]/.test(code),
+  "bp-35": (code) => />\s*80/.test(code) && /\+/.test(code),
+  "bp-36": (code) => /<\s*5/.test(code) && /\*/.test(code),
+  "bp-37": (code) => /%\s*2\s*!=\s*0/.test(code) || /%\s*2\s*==\s*1/.test(code),
   // ==========================================
   // --- Main Problems (C++) ---
   // ==========================================
@@ -317,6 +322,26 @@ const REFERENCE_SOLVERS = {
   "bp-32": (stdin) => {
     const months = Number(stdin.trim());
     return `${Math.floor(months / 12)} ${months % 12}`;
+  },
+  "bp-33": (stdin) => {
+    const [a, b] = stdin.trim().split(/\s+/).map(Number);
+    return String(Math.min(a, b));
+  },
+  "bp-34": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(Math.min(...nums));
+  },
+  "bp-35": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => x > 80).reduce((a, b) => a + b, 0));
+  },
+  "bp-36": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => x < 5).reduce((a, b) => a * b, 1));
+  },
+  "bp-37": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => Math.abs(x) % 2 === 1).reduce((a, b) => a * b, 1));
   },
 
 

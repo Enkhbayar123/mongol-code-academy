@@ -1247,6 +1247,206 @@ if line:
       { input: "50", output: "4 2" },
       { input: "120", output: "10 0" }
     ]
+  },
+  { 
+    id: 'bp-33', 
+    name: 'Хоёр тооны бага', 
+    videoId: 'DTh_has267I', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 2 тооны багыг ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 2 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Бага тоо.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+9 6
+
+Output:
+6</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7102/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    a, b = map(int, line.split())
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "9 6", output: "6" },
+      { input: "10 20", output: "10" },
+      { input: "5 5", output: "5" },
+      { input: "-5 -10", output: "-10" },
+      { input: "0 -2", output: "-2" },
+      { input: "100 99", output: "99" },
+      { input: "-50 50", output: "-50" },
+      { input: "123 456", output: "123" },
+      { input: "7 3", output: "3" },
+      { input: "-15 -3", output: "-15" }
+    ]
+  },
+  { 
+    id: 'bp-34', 
+    name: '4 тооны бага', 
+    videoId: 'Z6e_4_F3jzE', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 4 тооны багыг ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 4 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Бага тоо.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3 2 1 4
+
+Output:
+1</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7104/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "3 2 1 4", output: "1" },
+      { input: "10 20 30 40", output: "10" },
+      { input: "5 5 5 5", output: "5" },
+      { input: "-1 -5 -2 -10", output: "-10" },
+      { input: "0 5 10 -3", output: "-3" },
+      { input: "100 50 80 20", output: "20" },
+      { input: "7 8 9 6", output: "6" },
+      { input: "42 17 99 23", output: "17" },
+      { input: "-15 0 15 -30", output: "-30" },
+      { input: "1 2 3 0", output: "0" }
+    ]
+  },
+  { 
+    id: 'bp-35', 
+    name: 'Нийлбэр 80', 
+    videoId: 'Mh-0XvZMSpg', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 4 тооны 80-аас их тоонуудын нийлбэрийг ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 4 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Нийлбэр.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+85 75 96 69
+
+Output:
+181</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7105/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "85 75 96 69", output: "181" },
+      { input: "81 82 83 84", output: "330" },
+      { input: "10 20 30 40", output: "0" },
+      { input: "80 80 80 80", output: "0" },
+      { input: "100 200 50 70", output: "300" },
+      { input: "81 10 20 30", output: "81" },
+      { input: "90 90 90 10", output: "270" },
+      { input: "79 80 81 82", output: "163" },
+      { input: "150 120 110 100", output: "480" },
+      { input: "50 60 70 80", output: "0" }
+    ]
+  },
+  { 
+    id: 'bp-36', 
+    name: 'Үржвэр 5', 
+    videoId: 'vl3qslcJltw', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 4 тооны 5-аас бага тоонуудын үржвэрийг ол. 5-аас бага тоо ядаж 1 байгаа.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 4 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Үржвэр</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3 6 2 4
+
+Output:
+24</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7106/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "3 6 2 4", output: "24" },
+      { input: "1 2 3 4", output: "24" },
+      { input: "5 6 7 2", output: "2" },
+      { input: "3 3 3 3", output: "81" },
+      { input: "1 5 5 5", output: "1" },
+      { input: "2 4 10 20", output: "8" },
+      { input: "4 4 5 6", output: "16" },
+      { input: "1 1 1 1", output: "1" },
+      { input: "2 3 4 5", output: "24" },
+      { input: "4 10 15 20", output: "4" }
+    ]
+  },
+  { 
+    id: 'bp-37', 
+    name: 'Сондгой тоонуудын үржвэр', 
+    videoId: 'Ud-bCt-vLCw', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 3 тоон дахь сондгой тоонуудын үржвэрийг ол. Ядаж 1 сондгой тоо байгаа.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 3 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Үржвэр</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+5 2 3
+
+Output:
+15</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7108/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "5 2 3", output: "15" },
+      { input: "1 3 5", output: "15" },
+      { input: "2 4 7", output: "7" },
+      { input: "3 3 3", output: "27" },
+      { input: "9 2 4", output: "9" },
+      { input: "7 5 2", output: "35" },
+      { input: "11 13 2", output: "143" },
+      { input: "1 1 1", output: "1" },
+      { input: "3 5 7", output: "105" },
+      { input: "2 8 9", output: "9" }
+    ]
   }
 ];
 
