@@ -18,10 +18,12 @@ import Register from './pages/Register';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import MongolGPT from './pages/MongolGPT';
-import SupervisorDashboard from './pages/SupervisorDashboard'; // Added Supervisor Dashboard import
+import SupervisorDashboard from './pages/SupervisorDashboard';
 import ExamTest1 from './pages/ExamTest1';
 import ChangePassword from './pages/ChangePassword';
 
+// Guard
+import RequirePasswordChangeGuard from './components/RequirePasswordChangeGuard';
 
 function App() {
   return (
@@ -35,21 +37,24 @@ function App() {
         <Navbar />
         <main className="flex-grow relative z-10">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/practice-hub" element={<PracticeHub />} />
-            <Route path="/practice-basic" element={<BasicPracticeList />} />
-            <Route path="/curriculum" element={<Curriculum />} />
-            <Route path="/practice-basic/:id" element={<BasicProblem />} />
-            <Route path="/problem/:id" element={<Problem />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/mongol-gpt" element={<MongolGPT />} />
+            {/* Public Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/supervisor-dashboard" element={<SupervisorDashboard />} /> {/* Added Supervisor Dashboard Route */}
-            <Route path="/exam/semester-1" element={<ExamTest1 />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/change-password" element={<ChangePassword />} />
+
+            {/* Protected Routes Enforced by Password Guard */}
+            <Route path="/" element={<RequirePasswordChangeGuard><Home /></RequirePasswordChangeGuard>} />
+            <Route path="/courses" element={<RequirePasswordChangeGuard><Courses /></RequirePasswordChangeGuard>} />
+            <Route path="/practice-hub" element={<RequirePasswordChangeGuard><PracticeHub /></RequirePasswordChangeGuard>} />
+            <Route path="/practice-basic" element={<RequirePasswordChangeGuard><BasicPracticeList /></RequirePasswordChangeGuard>} />
+            <Route path="/curriculum" element={<RequirePasswordChangeGuard><Curriculum /></RequirePasswordChangeGuard>} />
+            <Route path="/practice-basic/:id" element={<RequirePasswordChangeGuard><BasicProblem /></RequirePasswordChangeGuard>} />
+            <Route path="/problem/:id" element={<RequirePasswordChangeGuard><Problem /></RequirePasswordChangeGuard>} />
+            <Route path="/mongol-gpt" element={<RequirePasswordChangeGuard><MongolGPT /></RequirePasswordChangeGuard>} />
+            <Route path="/admin" element={<RequirePasswordChangeGuard><Admin /></RequirePasswordChangeGuard>} />
+            <Route path="/supervisor-dashboard" element={<RequirePasswordChangeGuard><SupervisorDashboard /></RequirePasswordChangeGuard>} />
+            <Route path="/exam/semester-1" element={<RequirePasswordChangeGuard><ExamTest1 /></RequirePasswordChangeGuard>} />
           </Routes>
         </main>
         <Footer />
