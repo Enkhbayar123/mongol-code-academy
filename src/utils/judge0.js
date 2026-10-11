@@ -108,6 +108,12 @@ const VERIFIERS = {
   "bp-35": (code) => />\s*80/.test(code) && /\+/.test(code),
   "bp-36": (code) => /<\s*5/.test(code) && /\*/.test(code),
   "bp-37": (code) => /%\s*2\s*!=\s*0/.test(code) || /%\s*2\s*==\s*1/.test(code),
+  "bp-38": (code) => /==\s*5/.test(code),
+  "bp-39": (code) => /%\s*3\s*==\s*0/.test(code),
+  "bp-40": (code) => /%\s*11\s*!=\s*0/.test(code),
+  "bp-41": (code) => />\s*10/.test(code) && /YES/.test(code) && /NO/.test(code),
+  "bp-42": (code) => /<\s*5/.test(code) && /YES/.test(code) && /NO/.test(code),
+  "bp-43": (code) => /%\s*2\s*==\s*0/.test(code) && /YES/.test(code) && /NO/.test(code),
   // ==========================================
   // --- Main Problems (C++) ---
   // ==========================================
@@ -342,6 +348,30 @@ const REFERENCE_SOLVERS = {
   "bp-37": (stdin) => {
     const nums = stdin.trim().split(/\s+/).map(Number);
     return String(nums.filter((x) => Math.abs(x) % 2 === 1).reduce((a, b) => a * b, 1));
+  },
+  "bp-38": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => x === 5).length);
+  },
+  "bp-39": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => x % 3 === 0).length);
+  },
+  "bp-40": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return String(nums.filter((x) => x % 11 !== 0).reduce((a, b) => a + b, 0));
+  },
+  "bp-41": (stdin) => {
+    const n = Number(stdin.trim());
+    return n > 10 ? "YES" : "NO";
+  },
+  "bp-42": (stdin) => {
+    const n = Number(stdin.trim());
+    return n < 5 ? "YES" : "NO";
+  },
+  "bp-43": (stdin) => {
+    const nums = stdin.trim().split(/\s+/).map(Number);
+    return nums.map((x) => (x % 2 === 0 ? "YES" : "NO")).join("\n");
   },
 
 

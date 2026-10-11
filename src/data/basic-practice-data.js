@@ -1447,6 +1447,250 @@ if line:
       { input: "3 5 7", output: "105" },
       { input: "2 8 9", output: "9" }
     ]
+  },
+  { 
+    id: 'bp-38', 
+    name: 'Тэнцүү 5', 
+    videoId: 'BuevqbY5Dc8', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 3 тоон дотроос 5-тай тэнцүү тоонуудын тоог ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 3 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>5-тай тэнцүү тоонуудын тоо.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+2 5 5
+
+Output:
+2</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7109/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "2 5 5", output: "2" },
+      { input: "5 5 5", output: "3" },
+      { input: "1 2 3", output: "0" },
+      { input: "5 1 2", output: "1" },
+      { input: "0 5 0", output: "1" },
+      { input: "10 5 5", output: "2" },
+      { input: "-5 5 5", output: "2" },
+      { input: "50 5 15", output: "1" },
+      { input: "4 6 8", output: "0" },
+      { input: "5 5 1", output: "2" }
+    ]
+  },
+  { 
+    id: 'bp-39', 
+    name: '3-д хуваагдах', 
+    videoId: 'aNx-GFsxAFk', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 4 тоон дотроос 3-д хуваагддаг тоонуудын тоог ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 4 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>3-д хуваагддаг тоонуудын тоо.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3 12 8 9
+
+Output:
+3</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7110/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "3 12 8 9", output: "3" },
+      { input: "1 2 4 5", output: "0" },
+      { input: "3 6 9 12", output: "4" },
+      { input: "9 1 2 4", output: "1" },
+      { input: "6 15 7 8", output: "2" },
+      { input: "21 24 27 10", output: "3" },
+      { input: "10 20 40 50", output: "0" },
+      { input: "33 66 99 100", output: "3" },
+      { input: "0 3 6 9", output: "4" },
+      { input: "18 20 22 24", output: "2" }
+    ]
+  },
+  { 
+    id: 'bp-40', 
+    name: '11-д хуваагддаггүй', 
+    videoId: 'HKvn1WZQcPU', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн 4 тооны 11-д хуваагддаггүй тоонуудынх нь нийлбэрийг ол.</p>
+      <h4>Input</h4>
+      <p>Нэг мөрөнд Int төрлийн 4 тоо зайгаар тусгаарлагдан өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>11-д хуваагддаггүй тоонуудын нийлбэр.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+7 22 13 30
+
+Output:
+50</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7111/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    nums = list(map(int, line.split()))
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "7 22 13 30", output: "50" },
+      { input: "11 22 33 44", output: "0" },
+      { input: "1 2 3 4", output: "10" },
+      { input: "11 1 2 3", output: "6" },
+      { input: "22 33 5 5", output: "10" },
+      { input: "55 10 20 30", output: "60" },
+      { input: "10 20 30 40", output: "100" },
+      { input: "11 22 33 1", output: "1" },
+      { input: "77 88 99 110", output: "0" },
+      { input: "9 18 27 36", output: "90" }
+    ]
+  },
+  { 
+    id: 'bp-41', 
+    name: '10-аас их', 
+    videoId: 'XtlpgLIW7ng', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн тоо 10-аас их бол YES үгүй бол NO гэж хэвлэ.</p>
+      <h4>Input</h4>
+      <p>Int төрлийн 1 тоо өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>YES эсвэл NO гэж хэвлэгдэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+11
+
+Output:
+YES</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7112/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    n = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "11", output: "YES" },
+      { input: "10", output: "NO" },
+      { input: "9", output: "NO" },
+      { input: "100", output: "YES" },
+      { input: "0", output: "NO" },
+      { input: "-5", output: "NO" },
+      { input: "15", output: "YES" },
+      { input: "1", output: "NO" },
+      { input: "20", output: "YES" },
+      { input: "8", output: "NO" }
+    ]
+  },
+  { 
+    id: 'bp-42', 
+    name: '5-аас бага', 
+    videoId: 'dNcGZJ1rzF4', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Өгөгдсөн тоо 5-аас бага бол YES үгүй бол NO гэж хэвлэ.</p>
+      <h4>Input</h4>
+      <p>Int төрлийн нэг тоо өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>YES эсвэл NO гэж хэвлэгдэнэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+4
+
+Output:
+YES</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7113/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+line = sys.stdin.readline()
+if line:
+    n = int(line)
+    
+    # Write your code here
+    `,
+    testCases: [
+      { input: "4", output: "YES" },
+      { input: "5", output: "NO" },
+      { input: "6", output: "NO" },
+      { input: "0", output: "YES" },
+      { input: "-10", output: "YES" },
+      { input: "10", output: "NO" },
+      { input: "1", output: "YES" },
+      { input: "3", output: "YES" },
+      { input: "100", output: "NO" },
+      { input: "-1", output: "YES" }
+    ]
+  },
+  { 
+    id: 'bp-43', 
+    name: 'Тэгш тоонууд YES', 
+    videoId: 'ZUikJQ8and4', 
+    description: `
+      <h4>Бодлогын тодорхойлолт</h4>
+      <p>Гурван тоо өгөгдөнө. Тоо тэгш бол YES үгүй бол NO гэж хэвлэ.</p>
+      <h4>Input</h4>
+      <p>Int төрлийн 3 тоо нэг нэг мөрөнд өгөгдөнө.</p>
+      <h4>Output</h4>
+      <p>Тоо тус бүрийг шалгаад нэг нэг мөрөнд хариуг хэвлэ.</p>
+      <h4>Example</h4>
+      <pre><code>Input:
+3
+4
+5
+
+Output:
+NO
+YES
+NO</code></pre>`, 
+    spojLink: 'https://www.spoj.com/RGB7/problems/RGB7114/',
+    defaultLanguage: "python",
+    starterCode: `import sys
+
+lines = sys.stdin.read().splitlines()
+for line in lines:
+    if line.strip():
+        n = int(line)
+        # Write your code here
+        `,
+    testCases: [
+      { input: "3\n4\n5", output: "NO\nYES\nNO" },
+      { input: "2\n4\n6", output: "YES\nYES\nYES" },
+      { input: "1\n3\n5", output: "NO\nNO\nNO" },
+      { input: "0\n10\n11", output: "YES\nYES\nNO" },
+      { input: "8\n9\n10", output: "YES\nNO\nYES" },
+      { input: "-2\n-3\n4", output: "YES\nNO\nYES" },
+      { input: "100\n200\n301", output: "YES\nYES\nNO" },
+      { input: "7\n8\n9", output: "NO\nYES\nNO" },
+      { input: "12\n13\n14", output: "YES\nNO\nYES" },
+      { input: "15\n17\n19", output: "NO\nNO\nNO" }
+    ]
   }
 ];
 
