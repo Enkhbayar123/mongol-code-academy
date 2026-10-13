@@ -24,6 +24,8 @@ import ChangePassword from './pages/ChangePassword';
 
 // Guard
 import RequirePasswordChangeGuard from './components/RequirePasswordChangeGuard';
+import TegshUhaanStudents from './pages/TegshUhaanStudents';
+
 
 function App() {
   return (
@@ -55,6 +57,7 @@ function App() {
             <Route path="/admin" element={<RequirePasswordChangeGuard><Admin /></RequirePasswordChangeGuard>} />
             <Route path="/supervisor-dashboard" element={<RequirePasswordChangeGuard><SupervisorDashboard /></RequirePasswordChangeGuard>} />
             <Route path="/exam/semester-1" element={<RequirePasswordChangeGuard><ExamTest1 /></RequirePasswordChangeGuard>} />
+            <Route path="/admin/students" element={<TegshUhaanStudents />} />
           </Routes>
         </main>
         <Footer />
