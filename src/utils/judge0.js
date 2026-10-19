@@ -14,53 +14,113 @@ function cleanCode(code) {
     .trim();
 }
 
+const checkSemicolons = (rawCode) => {
+  // Remove comments from raw code
+  const clean = rawCode.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, "");
+  const lines = clean.split('\n');
+
+  for (let line of lines) {
+    const trimmed = line.trim();
+
+    // Skip empty lines, single braces, preprocessor directives, and control/function headers
+    if (
+      !trimmed ||
+      trimmed === '{' ||
+      trimmed === '}' ||
+      trimmed.startsWith('#') ||
+      trimmed.startsWith('//') ||
+      /^(int\s+main|if\s*\(|for\s*\(|while\s*\(|switch\s*\(|else)/.test(trimmed) ||
+      trimmed.endsWith('{')
+    ) {
+      continue;
+    }
+
+    // Every other actionable line MUST end with a semicolon
+    if (!trimmed.endsWith(';')) {
+      return false;
+    }
+  }
+  return true;
+};
+
 // Strict requirement verifiers for C++ code
 // Prevents false positives by ensuring the core C++ logic is implemented
 const VERIFIERS = {
   // ==========================================
   // --- Semester 1 Exam Problems (C++) ---
   // ==========================================
-  "exam1-p1": (code) => {
+  "exam1-p1": (cleaned, sourceCode) => {
     // y = 4*x*x - 3*x + 5
-    const hasCin = /cin\s*>>/.test(code);
+    const hasCin = /cin\s*>>/.test(cleaned);
+    
+    // Ensure they have cout, but block printing raw input 'x' directly
+    const hasValidOutput = /cout\s*<</.test(cleaned) && !/cout\s*<<\s*x\s*(;|\s|$)/.test(cleaned);
+
     const hasFormula =
-      (code.includes("4*") || code.includes("4 *")) &&
-      (code.includes("3*") || code.includes("3 *")) &&
-      (code.includes("+5") || code.includes("+ 5") || code.includes("+ 5;"));
-    return hasCin && hasFormula;
+      (cleaned.includes("4*") || cleaned.includes("4 *")) &&
+      (cleaned.includes("3*") || cleaned.includes("3 *")) &&
+      (cleaned.includes("+5") || cleaned.includes("+ 5") || cleaned.includes("+ 5;"));
+
+    // Run the strict line-by-line semicolon check on raw sourceCode
+    const hasValidSemicolons = checkSemicolons(sourceCode);
+
+    return hasCin && hasValidOutput && hasFormula && hasValidSemicolons;
   },
 
-  "exam1-p2": (code) => {
+  "exam1-p2": (cleaned, sourceCode) => {
     // Tens digit of integer: n / 10 % 10 or n % 100 / 10
-    const hasCin = /cin\s*>>/.test(code);
+    const hasCin = /cin\s*>>/.test(cleaned);
+    
+    // Ensure they print a result variable, blocking direct printing of raw input 'n'
+    const hasCoutResult = /cout\s*<<\s*[a-zA-Z_]\w*/.test(cleaned) && !/cout\s*<<\s*n\s*(;|\s|$)/.test(cleaned);
+    
     const hasTensMath =
-      (/\/\s*10/.test(code) && /%\s*10/.test(code)) ||
-      (/%\s*100/.test(code) && /\/\s*10/.test(code));
-    return hasCin && hasTensMath;
+      (/\/\s*10/.test(cleaned) && /%\s*10/.test(cleaned)) ||
+      (/%\s*100/.test(cleaned) && /\/\s*10/.test(cleaned));
+      
+    // Enforce line-by-line semicolons on raw source code
+    const hasValidSemicolons = checkSemicolons(sourceCode);
+
+    return hasCin && hasCoutResult && hasTensMath && hasValidSemicolons;
   },
 
-  "exam1-p3": (code) => {
+  "exam1-p3": (cleaned, sourceCode) => {
     // Convert seconds to min and sec: / 60 and % 60
-    const hasCin = /cin\s*>>/.test(code);
-    const hasDiv60 = /\/\s*60/.test(code);
-    const hasMod60 = /%\s*60/.test(code);
-    return hasCin && hasDiv60 && hasMod60;
+    const hasCin = /cin\s*>>/.test(cleaned);
+    const hasCoutResult = /cout\s*<</.test(cleaned);
+    const hasDiv60 = /\/\s*60/.test(cleaned);
+    const hasMod60 = /%\s*60/.test(cleaned);
+    
+    // Run strict line-by-line semicolon check on raw source code
+    const hasValidSemicolons = checkSemicolons(sourceCode);
+    
+    return hasCin && hasCoutResult && hasDiv60 && hasMod60 && hasValidSemicolons;
   },
 
-  "exam1-p4": (code) => {
+  "exam1-p4": (cleaned, sourceCode) => {
     // Convert min and sec to total seconds: min * 60 + sec
-    const hasCin = /cin\s*>>/.test(code);
-    const hasMul60 = /\*\s*60/.test(code) || /60\s*\*/.test(code);
-    const hasAdd = /\+/.test(code);
-    return hasCin && hasMul60 && hasAdd;
+    const hasCin = /cin\s*>>/.test(cleaned);
+    const hasCoutResult = /cout\s*<</.test(cleaned);
+    const hasMul60 = /\*\s*60/.test(cleaned) || /60\s*\*/.test(cleaned);
+    const hasAdd = /\+/.test(cleaned);
+    
+    // Run strict line-by-line semicolon check on raw source code
+    const hasValidSemicolons = checkSemicolons(sourceCode);
+    
+    return hasCin && hasCoutResult && hasMul60 && hasAdd && hasValidSemicolons;
   },
 
-  "exam1-p5": (code) => {
+  "exam1-p5": (cleaned, sourceCode) => {
     // Convert days and hours to total hours: days * 24 + hours
-    const hasCin = /cin\s*>>/.test(code);
-    const hasMul24 = /\*\s*24/.test(code) || /24\s*\*/.test(code);
-    const hasAdd = /\+/.test(code);
-    return hasCin && hasMul24 && hasAdd;
+    const hasCin = /cin\s*>>/.test(cleaned);
+    const hasCoutResult = /cout\s*<</.test(cleaned);
+    const hasMul24 = /\*\s*24/.test(cleaned) || /24\s*\*/.test(cleaned);
+    const hasAdd = /\+/.test(cleaned);
+    
+    // Run strict line-by-line semicolon check on raw source code
+    const hasValidSemicolons = checkSemicolons(sourceCode);
+    
+    return hasCin && hasCoutResult && hasMul24 && hasAdd && hasValidSemicolons;
   },
 
   // ==========================================
@@ -882,7 +942,7 @@ export const executeCode = async (
 
   // 3. Problem-specific C++ logic validation
   const verifier = VERIFIERS[problemId];
-  if (verifier && !verifier(cleaned)) {
+  if (verifier && !verifier(cleaned, sourceCode)) {
     // Return an incorrect answer if verification fails
     return {
       stdout: "0",
